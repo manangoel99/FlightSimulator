@@ -18,10 +18,20 @@ Ball ball1;
 Plane plane;
 Sea sea;
 
+int camera_view = 0;
+
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 
 Timer t60(1.0 / 60);
+
+int CAMERA_CHANGE_VAR = 0;
+
+glm::vec3 eye(-1.5, 3, 0);
+// Target - Where is the camera looking at.  Don't change unless you are sure!!
+glm::vec3 target(0, 0, 0);
+// Up - Up vector defines tilt of camera.  Don't change unless you are sure!!
+glm::vec3 up(0, 1, 0);
 
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
@@ -35,11 +45,6 @@ void draw() {
 
     // Eye - Location of camera. Don't change unless you are sure!!
     //glm::vec3 eye ( 5*cos(camera_rotation_angle*M_PI/180.0f), 0, 5*sin(camera_rotation_angle*M_PI/180.0f) );
-    glm::vec3 eye (-1.5, 3, 0);
-    // Target - Where is the camera looking at.  Don't change unless you are sure!!
-    glm::vec3 target (0, 0, 0);
-    // Up - Up vector defines tilt of camera.  Don't change unless you are sure!!
-    glm::vec3 up (0, 1, 0);
 
     // Compute Camera matrix (view)
     Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
@@ -64,8 +69,22 @@ void draw() {
 void tick_input(GLFWwindow *window) {
     int left  = glfwGetKey(window, GLFW_KEY_LEFT);
     int right = glfwGetKey(window, GLFW_KEY_RIGHT);
-    if (left) {
-        // Do something
+    int c = glfwGetKey(window, GLFW_KEY_C);
+    if (c == GLFW_PRESS && CAMERA_CHANGE_VAR == 0) {
+        if (camera_view == 0) {
+            eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);
+            target = plane.position;
+            camera_view++;
+        }
+        else if (camera_view == 1) {
+            eye = glm::vec3(plane.position.x + 0.000000000001, plane.position.y + 5, plane.position.z);
+            target = plane.position;
+            camera_view = 0;
+        }
+        CAMERA_CHANGE_VAR = 1;
+    }
+    else if (c == GLFW_RELEASE) {
+        CAMERA_CHANGE_VAR = 0;
     }
 }
 
