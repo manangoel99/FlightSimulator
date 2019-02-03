@@ -4,12 +4,12 @@
 Sea::Sea(float x, float y, float z, color_t color) {
     this->rotation = 0;
     static const GLfloat vertex_buffer_data[] = {
-        -100.0f, 000.0f, -100.0f,
-        -100.0f, 000.0f, 100.0f,
-        100.0f, 000.0f, 100.0f,
-        100.0f, 000.0f, 100.0f,
-        -100.0f, 000.0f, -100.0f,
-        100.0f, 0.0f, -100.0f,
+        -1000.0f, -004.0f, -1000.0f,
+        -1000.0f, -004.0f, 1000.0f,
+        1000.0f, -004.0f, 1000.0f,
+        1000.0f, -004.0f, 1000.0f,
+        -1000.0f, -004.0f, -1000.0f,
+        1000.0f, -4.0f, -1000.0f,
     };
 
     this->position = glm::vec3(x, y, z);

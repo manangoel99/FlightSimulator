@@ -12,7 +12,10 @@ class Plane {
         void draw(glm::mat4 VP);
         void set_position(float x, float y);
         void tick();
-        double speed;
+        glm::vec3 speed;
+        float roll;
+        float pitch;
+        float yaw;
     private:
         VAO *object;
         VAO *finobj;

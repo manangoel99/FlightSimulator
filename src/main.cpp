@@ -66,10 +66,25 @@ void draw() {
     plane.draw(VP);
 }
 
+void updatecam() {
+    if (camera_view == 0) {
+        eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);
+        target = plane.position;
+    }
+    else if (camera_view == 1) {
+        eye = glm::vec3(plane.position.x + 0.000000000001, plane.position.y + 5, plane.position.z);
+        target = plane.position;
+    }
+}
+
 void tick_input(GLFWwindow *window) {
     int left  = glfwGetKey(window, GLFW_KEY_LEFT);
     int right = glfwGetKey(window, GLFW_KEY_RIGHT);
     int c = glfwGetKey(window, GLFW_KEY_C);
+    int up = glfwGetKey(window, GLFW_KEY_SPACE);
+    int down = glfwGetKey(window, GLFW_KEY_DOWN);
+    int forward = glfwGetKey(window, GLFW_KEY_UP);
+
     if (c == GLFW_PRESS && CAMERA_CHANGE_VAR == 0) {
         if (camera_view == 0) {
             eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);
@@ -86,10 +101,34 @@ void tick_input(GLFWwindow *window) {
     else if (c == GLFW_RELEASE) {
         CAMERA_CHANGE_VAR = 0;
     }
+
+    if (up) {
+        plane.speed = glm::vec3(plane.speed.x, 0.05, plane.speed.z);
+        if (plane.yaw <= 30)
+            plane.yaw += 0.1;
+    }
+
+    if (down) {
+        plane.speed = glm::vec3(plane.speed.x, -0.05, plane.speed.z);
+        if (plane.yaw >= -30)
+            plane.yaw -= 0.1;
+    }
+
+    if (!up && !down) {
+        plane.speed = glm::vec3(0, 0, 0);
+        if (plane.yaw > 0) {
+            plane.yaw -= 0.25;
+        }
+        if (plane.yaw < 0) {
+            plane.yaw += 0.25;
+        }
+    }
 }
 
 void tick_elements() {
     ball1.tick();
+    plane.tick();
+    updatecam();
     //camera_rotation_angle += 1;
 }
 
