@@ -133,5 +133,5 @@ void Plane::draw(glm::mat4 VP) {
 }
 
 void Plane::tick() {
-    this->position += this->speed;
+    //this->position += this->speed;
 }

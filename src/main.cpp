@@ -61,7 +61,7 @@ void draw() {
     glm::mat4 MVP;  // MVP = Projection * View * Model
 
     // Scene render
-    //ball1.draw(VP);
+    ball1.draw(VP);
     sea.draw(VP);
     plane.draw(VP);
 }
@@ -72,7 +72,7 @@ void updatecam() {
         target = plane.position;
     }
     else if (camera_view == 1) {
-        eye = glm::vec3(plane.position.x + 0.000000000001, plane.position.y + 5, plane.position.z);
+        eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);
         target = plane.position;
     }
 }
@@ -83,7 +83,7 @@ void tick_input(GLFWwindow *window) {
     int c = glfwGetKey(window, GLFW_KEY_C);
     int up = glfwGetKey(window, GLFW_KEY_SPACE);
     int down = glfwGetKey(window, GLFW_KEY_DOWN);
-    int forward = glfwGetKey(window, GLFW_KEY_UP);
+    int forward = glfwGetKey(window, GLFW_KEY_W);
 
     if (c == GLFW_PRESS && CAMERA_CHANGE_VAR == 0) {
         if (camera_view == 0) {
@@ -92,7 +92,7 @@ void tick_input(GLFWwindow *window) {
             camera_view++;
         }
         else if (camera_view == 1) {
-            eye = glm::vec3(plane.position.x + 0.000000000001, plane.position.y + 5, plane.position.z);
+            eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);
             target = plane.position;
             camera_view = 0;
         }
@@ -103,19 +103,33 @@ void tick_input(GLFWwindow *window) {
     }
 
     if (up) {
-        plane.speed = glm::vec3(plane.speed.x, 0.05, plane.speed.z);
+        plane.position.y += 0.05;
         if (plane.yaw <= 30)
             plane.yaw += 0.1;
     }
 
     if (down) {
-        plane.speed = glm::vec3(plane.speed.x, -0.05, plane.speed.z);
+        plane.position.y -= 0.05;
         if (plane.yaw >= -30)
             plane.yaw -= 0.1;
     }
 
-    if (!up && !down) {
-        plane.speed = glm::vec3(0, 0, 0);
+    if (forward) {
+        plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
+        plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+    }
+
+    if (left) {
+        plane.pitch -= 1;
+    }
+
+    if (right) {
+        plane.pitch += 1;
+    }
+
+
+
+    if (!up && !down && !forward) {
         if (plane.yaw > 0) {
             plane.yaw -= 0.25;
         }
@@ -138,7 +152,7 @@ void initGL(GLFWwindow *window, int width, int height) {
     /* Objects should be created before any other gl function and shaders */
     // Create the models
 
-    ball1       = Ball(0, 0, COLOR_RED);
+    ball1       = Ball(0, 2, COLOR_RED);
     plane       = Plane(0, 1, 0, COLOR_BLACK);
     sea         = Sea(0, 0, 0, COLOR_BLUE);
 
