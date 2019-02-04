@@ -120,11 +120,11 @@ void tick_input(GLFWwindow *window) {
     }
 
     if (left) {
-        plane.pitch -= 1;
+        plane.pitch += 1;
     }
 
     if (right) {
-        plane.pitch += 1;
+        plane.pitch -= 1;
     }
 
 
