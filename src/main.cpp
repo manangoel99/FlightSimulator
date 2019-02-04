@@ -75,24 +75,36 @@ void updatecam() {
         eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);
         target = plane.position;
     }
+    else if (camera_view == 2) {
+
+        eye = glm::vec3(plane.position.x + 5 * sin(plane.pitch * M_PI / 180), plane.position.y + 5, plane.position.z - 5 * cos(plane.pitch * M_PI / 180));
+        target = plane.position;
+    }
 }
 
 void tick_input(GLFWwindow *window) {
-    int left  = glfwGetKey(window, GLFW_KEY_LEFT);
-    int right = glfwGetKey(window, GLFW_KEY_RIGHT);
+    int left  = glfwGetKey(window, GLFW_KEY_A);
+    int right = glfwGetKey(window, GLFW_KEY_D);
     int c = glfwGetKey(window, GLFW_KEY_C);
     int up = glfwGetKey(window, GLFW_KEY_SPACE);
     int down = glfwGetKey(window, GLFW_KEY_DOWN);
     int forward = glfwGetKey(window, GLFW_KEY_W);
+    int q = glfwGetKey(window, GLFW_KEY_Q);
+    int e = glfwGetKey(window, GLFW_KEY_E);
 
     if (c == GLFW_PRESS && CAMERA_CHANGE_VAR == 0) {
-        if (camera_view == 0) {
-            eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);
-            target = plane.position;
+        if (camera_view == 0) {         //Follow-Cam
+            eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);            //Follow-Cam
+            target = plane.position;            //Follow-Cam
+            camera_view++;          //Follow-Cam
+        }
+        else if (camera_view == 1) {     //Top View
+            eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);     //Top View
+            target = plane.position;     //Top View
             camera_view++;
         }
-        else if (camera_view == 1) {
-            eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);
+        else if (camera_view == 2) {
+            eye = glm::vec3(plane.position.x + 0.1 * cos(plane.pitch * M_PI / 180), plane.position.y + 5, plane.position.z - 3 * sin(plane.pitch * M_PI / 180));
             target = plane.position;
             camera_view = 0;
         }
@@ -125,6 +137,14 @@ void tick_input(GLFWwindow *window) {
 
     if (right) {
         plane.pitch -= 1;
+    }
+
+    if (q) {
+        plane.roll += 1;
+    }
+
+    if (e) {
+        plane.roll -= 1;
     }
 
 
