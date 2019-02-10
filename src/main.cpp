@@ -21,6 +21,7 @@ Ball ball1;
 Plane plane;
 Sea sea;
 vector <SmokeRing> rings;
+vector <Volcano> vols;
 
 int camera_view = 0;
 
@@ -63,13 +64,16 @@ void draw() {
     // For each model you render, since the MVP will be different (at least the M part)
     // Don't change unless you are sure!!
     glm::mat4 MVP;  // MVP = Projection * View * Model
-
     // Scene render
     //ball1.draw(VP);
     sea.draw(VP);
 
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         it->draw(VP);
+    }
+
+    for(vector <Volcano>::iterator i = vols.begin(); i != vols.end(); i++) {
+        i->draw(VP);
     }
 
     plane.draw(VP);
@@ -213,6 +217,11 @@ void initGL(GLFWwindow *window, int width, int height) {
         rings.push_back(r);
     }
 
+    for (ll i = 0; i < 15; i++) {
+        Volcano v = Volcano(rand() % 300, -4, rand() % 300);
+        vols.push_back(v);
+    }
+
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
     // Get a handle for our "MVP" uniform
@@ -237,8 +246,8 @@ void initGL(GLFWwindow *window, int width, int height) {
 
 int main(int argc, char **argv) {
     srand(time(0));
-    int width  = 600;
-    int height = 600;
+    int width  = 1080;
+    int height = 1080;
 
     window = initGLFW(width, height);
 
