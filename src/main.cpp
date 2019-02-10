@@ -3,6 +3,9 @@
 #include "ball.h"
 #include "plane.h"
 #include "sea.h"
+#include "enemy.h"
+
+#define ll long long
 
 using namespace std;
 
@@ -17,6 +20,7 @@ GLFWwindow *window;
 Ball ball1;
 Plane plane;
 Sea sea;
+vector <SmokeRing> rings;
 
 int camera_view = 0;
 
@@ -61,23 +65,27 @@ void draw() {
     glm::mat4 MVP;  // MVP = Projection * View * Model
 
     // Scene render
-    ball1.draw(VP);
+    //ball1.draw(VP);
     sea.draw(VP);
+
+    for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
+        it->draw(VP);
+    }
+
     plane.draw(VP);
 }
 
 void updatecam() {
     if (camera_view == 0) {
-        eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);
+        eye = glm::vec3(plane.position.x - 1.5 * cos(plane.pitch * M_PI / 180), plane.position.y + 3, plane.position.z + 1.5 * sin(plane.pitch * M_PI / 180)); //Follow-Cam
         target = plane.position;
     }
     else if (camera_view == 1) {
-        eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);
+        eye = glm::vec3(plane.position.x + 0.1, plane.position.y + 5, plane.position.z);    //Top
         target = plane.position;
     }
     else if (camera_view == 2) {
-
-        eye = glm::vec3(plane.position.x + 5 * sin(plane.pitch * M_PI / 180), plane.position.y + 5, plane.position.z - 5 * cos(plane.pitch * M_PI / 180));
+        eye = glm::vec3(10, 10, 10);    //Tower
         target = plane.position;
     }
 }
@@ -94,7 +102,7 @@ void tick_input(GLFWwindow *window) {
 
     if (c == GLFW_PRESS && CAMERA_CHANGE_VAR == 0) {
         if (camera_view == 0) {         //Follow-Cam
-            eye = glm::vec3(plane.position.x - 1.5, plane.position.y + 3, plane.position.z);            //Follow-Cam
+            eye = glm::vec3(plane.position.x - 1.5 * cos(plane.pitch * M_PI / 180), plane.position.y + 3, plane.position.z * sin(plane.pitch * M_PI / 180)); //Follow-Cam
             target = plane.position;            //Follow-Cam
             camera_view++;          //Follow-Cam
         }
@@ -104,7 +112,7 @@ void tick_input(GLFWwindow *window) {
             camera_view++;
         }
         else if (camera_view == 2) {
-            eye = glm::vec3(plane.position.x + 0.1 * cos(plane.pitch * M_PI / 180), plane.position.y + 5, plane.position.z - 3 * sin(plane.pitch * M_PI / 180));
+            eye = glm::vec3(5, 5, 5); //Tower
             target = plane.position;
             camera_view = 0;
         }
@@ -175,6 +183,11 @@ void initGL(GLFWwindow *window, int width, int height) {
     ball1       = Ball(0, 2, COLOR_RED);
     plane       = Plane(0, 1, 0, COLOR_BLACK);
     sea         = Sea(0, 0, 0, COLOR_BLUE);
+
+    for (ll i = 0; i < 50; i++) {
+        SmokeRing r = SmokeRing(rand() % 300, rand() % 30, rand() % 300);
+        rings.push_back(r);
+    }
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
