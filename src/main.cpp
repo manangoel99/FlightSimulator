@@ -141,10 +141,16 @@ void tick_input(GLFWwindow *window) {
 
     if (left) {
         plane.pitch += 1;
+        if (plane.roll > -5) {
+            plane.roll -= 1;
+        }
     }
 
     if (right) {
         plane.pitch -= 1;
+        if (plane.roll < 5) {
+            plane.roll += 1;
+        }
     }
 
     if (q) {
@@ -157,12 +163,21 @@ void tick_input(GLFWwindow *window) {
 
 
 
-    if (!up && !down && !forward) {
+    if (!up && !down) {
         if (plane.yaw > 0) {
             plane.yaw -= 0.25;
         }
         if (plane.yaw < 0) {
             plane.yaw += 0.25;
+        }
+    }
+
+    if (!left and !right) {
+        if (plane.roll > 0) {
+            plane.roll--;
+        }
+        else if (plane.roll < 0) {
+            plane.roll++;
         }
     }
 }
