@@ -34,4 +34,29 @@ class Volcano {
         VAO *object;
 };
 
+class Canon {
+    public:
+        Canon() {}
+        Canon(float x, float y, float z);
+        glm::vec3 position;
+        float rotation;
+        void draw(glm::mat4 VP, glm::vec3 planevec);
+    private:
+        VAO *object;
+};
+
+class CanonBall {
+    public:
+        CanonBall() {}
+        CanonBall(float x, float y, float z, glm::vec3 planevec);
+        glm::vec3 position;
+        float rotation;
+        void draw(glm::mat4 VP);
+        void tick();
+        glm::vec3 velocity;
+        glm::vec3 acc;
+    private:
+        VAO *object;
+};
+
 #endif // !ENEMIES_H

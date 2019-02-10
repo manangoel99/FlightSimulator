@@ -22,6 +22,9 @@ Plane plane;
 Sea sea;
 vector <SmokeRing> rings;
 vector <Volcano> vols;
+vector <Canon> canons;
+vector <CanonBall> balls;
+ll num_ticks = 0;
 
 int camera_view = 0;
 
@@ -67,6 +70,7 @@ void draw() {
     // Scene render
     //ball1.draw(VP);
     sea.draw(VP);
+    //c.draw(VP, plane.position);
 
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         it->draw(VP);
@@ -74,6 +78,15 @@ void draw() {
 
     for(vector <Volcano>::iterator i = vols.begin(); i != vols.end(); i++) {
         i->draw(VP);
+    }
+
+    for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
+        glm::vec3 planevec = glm::vec3(plane.position.x - it->position.x, plane.position.y - it->position.y, plane.position.z - it->position.z);
+        it->draw(VP, planevec);
+    }
+
+    for (vector <CanonBall>::iterator it = balls.begin(); it != balls.end(); it++) {
+        it->draw(VP);
     }
 
     plane.draw(VP);
@@ -191,6 +204,8 @@ void tick_elements() {
     plane.tick();
     updatecam();
 
+    num_ticks++;
+
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         if(it->DetectPassing(plane) == true) {
             rings.erase(it);
@@ -206,6 +221,25 @@ void tick_elements() {
         }
     }
 
+    if (num_ticks % 100 == 0) {
+        //CanonBall c1 = CanonBall(c.position.x, c.position.y, c.position.z, plane.position);
+        //balls.push_back(c1);
+        //cout << c1.rotation << endl;
+        int n = rand() % 10;
+        glm::vec3 planevec = glm::vec3(plane.position.x - canons[n].position.x, plane.position.y - canons[n].position.y, plane.position.z - canons[n].position.z);
+        CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
+        balls.push_back(c1);
+        cout << n << endl;
+    }
+
+    for (vector <CanonBall>::iterator it = balls.begin(); it != balls.end(); it++) {
+        it->tick();
+        if (it->position.y < -4) {
+            balls.erase(it);
+            it--;
+        }
+        //cout << it->position.x << '\t' << it->position.y << '\t' << it->position.z << endl;
+    }
     //camera_rotation_angle += 1;
 }
 
@@ -218,6 +252,7 @@ void initGL(GLFWwindow *window, int width, int height) {
     ball1       = Ball(0, 2, COLOR_RED);
     plane       = Plane(0, 1, 0, COLOR_BLACK);
     sea         = Sea(0, 0, 0, COLOR_BLUE);
+    //c           = Canon(0 , 0, 0);
 
     for (ll i = 0; i < 50; i++) {
         SmokeRing r = SmokeRing(rand() % 300, rand() % 30, rand() % 300);
@@ -227,6 +262,11 @@ void initGL(GLFWwindow *window, int width, int height) {
     for (ll i = 0; i < 15; i++) {
         Volcano v = Volcano(rand() % 300, -4, rand() % 300);
         vols.push_back(v);
+    }
+
+    for (ll i = 0; i < 10; i++) {
+        Canon c = Canon(rand() % 300, -3, rand() % 300);
+        canons.push_back(c);
     }
 
     // Create and compile our GLSL program from the shaders

@@ -171,3 +171,164 @@ bool Volcano::DetectPassing(Plane plane) {
         return false;
     }
 }
+
+Canon::Canon (float x, float y, float z) {
+    this->position = glm::vec3(x, y, z);
+
+    GLfloat coord[36000];
+
+    float theta = 0;
+
+    ll n = 1000;
+
+    float r = 0.25;
+
+    for (ll i = 0 * n; i < 18 * n; i += 18)
+    {
+        coord[i] = 0;
+        coord[i + 1] = r * sin(theta);
+        coord[i + 2] = r * cos(theta);
+
+        coord[i + 3] = 0.5;
+        coord[i + 4] = r * sin(theta);
+        coord[i + 5] = r * cos(theta);
+
+        coord[i + 6] = 0;
+        coord[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        coord[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        coord[i + 9] = 0;
+        coord[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        coord[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        coord[i + 12] = 0.5;
+        coord[i + 13] = r * sin(theta);
+        coord[i + 14] = r * cos(theta);
+
+        coord[i + 15] = 0.5;
+        coord[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        coord[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    theta = 0;
+
+    for (ll i = 18 * n; i < 36 * n; i += 18)
+    {
+        coord[i] = 0;
+        coord[i + 1] = r * sin(theta);
+        coord[i + 2] = r * cos(theta);
+
+        coord[i + 3] = -0.5;
+        coord[i + 4] = r * sin(theta);
+        coord[i + 5] = r * cos(theta);
+
+        coord[i + 6] = 0;
+        coord[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        coord[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        coord[i + 9] = 0;
+        coord[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        coord[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        coord[i + 12] = -0.5;
+        coord[i + 13] = r * sin(theta);
+        coord[i + 14] = r * cos(theta);
+
+        coord[i + 15] = -0.5;
+        coord[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        coord[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    this->object = create3DObject(GL_TRIANGLES, 12 * n, coord, COLOR_BLACK, GL_FILL);
+}
+
+void Canon::draw(glm::mat4 VP, glm::vec3 planevec) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->position); // glTranslatef
+    //glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(0, 0, 1));
+    
+    float angle1 = atan2(planevec.y, planevec.x);
+    
+    glm::mat4 rotate1 = glm::rotate(angle1, glm::vec3(0, 0, 1));
+
+    float angle2 = atan2(planevec.z, sqrt(planevec.x * planevec.x + planevec.y * planevec.y));
+
+    glm::mat4 rotate2 = glm::rotate(angle2, glm::vec3(asin(planevec.y / sqrt(planevec.y * planevec.y + planevec.x * planevec.x)), -1 * acos(planevec.x / sqrt(planevec.y * planevec.y + planevec.x * planevec.x)), 0));
+    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
+    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
+    Matrices.model *= (translate * rotate2 * rotate1);
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->object);
+}
+
+CanonBall::CanonBall(float x, float y, float z, glm::vec3 planevec) {
+    this->velocity = glm::vec3(planevec.x / 10, planevec.y / 10, planevec.z / 10);
+    this->rotation = 0;
+
+    this->acc = glm::vec3(0, -0.05, 0);
+
+    static const GLfloat vertex_buffer_data[] = {
+        -0.2f,-0.2f,-0.2f, // triangle 1 : begin
+        -0.2f,-0.2f, 0.2f,
+        -0.2f, 0.2f, 0.2f, // triangle 1 : end
+        0.2f, 0.2f,-0.2f, // triangle 2 : begin
+        -0.2f,-0.2f,-0.2f,
+        -0.2f, 0.2f,-0.2f, // triangle 2 : end
+        0.2f,-0.2f, 0.2f,
+        -0.2f,-0.2f,-0.2f,
+        0.2f,-0.2f,-0.2f,
+        0.2f, 0.2f,-0.2f,
+        0.2f,-0.2f,-0.2f,
+        -0.2f,-0.2f,-0.2f,
+        -0.2f,-0.2f,-0.2f,
+        -0.2f, 0.2f, 0.2f,
+        -0.2f, 0.2f,-0.2f,
+        0.2f,-0.2f, 0.2f,
+        -0.2f,-0.2f, 0.2f,
+        -0.2f,-0.2f,-0.2f,
+        -0.2f, 0.2f, 0.2f,
+        -0.2f,-0.2f, 0.2f,
+        0.2f,-0.2f, 0.2f,
+        0.2f, 0.2f, 0.2f,
+        0.2f,-0.2f,-0.2f,
+        0.2f, 0.2f,-0.2f,
+        0.2f,-0.2f,-0.2f,
+        0.2f, 0.2f, 0.2f,
+        0.2f,-0.2f, 0.2f,
+        0.2f, 0.2f, 0.2f,
+        0.2f, 0.2f,-0.2f,
+        -0.2f, 0.2f,-0.2f,
+        0.2f, 0.2f, 0.2f,
+        -0.2f, 0.2f,-0.2f,
+        -0.2f, 0.2f, 0.2f,
+        0.2f, 0.2f, 0.2f,
+        -0.2f, 0.2f, 0.2f,
+        0.2f,-0.2f, 0.2f
+    };
+
+    this->object = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data, COLOR_GREEN, GL_FILL);
+
+}
+
+void CanonBall::draw(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->position); // glTranslatef
+    glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(1, 1, 1));
+    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
+    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
+    Matrices.model *= (translate * rotate);
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->object);
+}
+
+void CanonBall::tick() {
+    this->position += this->velocity;
+    this->velocity += this->acc;
+    this->rotation += 1;
+}
