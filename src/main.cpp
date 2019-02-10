@@ -199,6 +199,13 @@ void tick_elements() {
         }
     }
 
+    for (vector <Volcano>::iterator it = vols.begin(); it != vols.end(); it++) {
+        if(it->DetectPassing(plane) == true) {
+            //cout << it->position.x << '\t' << it->position.z << endl;
+            quit(window);
+        }
+    }
+
     //camera_rotation_angle += 1;
 }
 

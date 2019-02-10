@@ -159,3 +159,15 @@ void Volcano::draw(glm::mat4 VP) {
     draw3DObject(this->object);
     draw3DObject(this->TopDisc);
 }
+
+bool Volcano::DetectPassing(Plane plane) {
+    float dist = (plane.position.x + 2 - this->position.x) * (plane.position.x + 2 - this->position.x);
+    dist += (plane.position.z - this->position.z) * (plane.position.z - this->position.z);
+
+    if (dist * dist <= this->UpperRadius * this->UpperRadius) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
