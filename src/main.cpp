@@ -171,6 +171,15 @@ void tick_elements() {
     ball1.tick();
     plane.tick();
     updatecam();
+
+    for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
+        if(it->DetectPassing(plane) == true) {
+            rings.erase(it);
+            it--;
+            break;
+        }
+    }
+
     //camera_rotation_angle += 1;
 }
 

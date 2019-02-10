@@ -1,5 +1,6 @@
 #include "main.h"
 #include "enemy.h"
+#include "plane.h"
 
 #define ll long long
 
@@ -58,4 +59,23 @@ void SmokeRing::draw(glm::mat4 VP) {
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object);
+}
+
+bool SmokeRing::DetectPassing(Plane plane) {
+    float dist = (this->position.x - plane.position.x) * (this->position.x - plane.position.x);
+    dist += (this->position.y - plane.position.y) * (this->position.y - plane.position.y);
+    dist += (this->position.z - plane.position.z) * (this->position.z - plane.position.z);
+
+    if (dist <= this->radius * this->radius) {
+        if ((plane.position.x - 2 < this->position.x && plane.position.x + 2 > this->position.x) || (plane.position.x - 2 > this->position.x && plane.position.x + 2 < this->position.x)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
 }

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "plane.h"
 
 #ifndef ENEMIES_H
 #define ENEMIES_H
@@ -12,6 +13,7 @@ class SmokeRing {
         void draw(glm::mat4 VP);
         float radius;
         color_t color;
+        bool DetectPassing(Plane plane);
     private:
         VAO *object;
 };
