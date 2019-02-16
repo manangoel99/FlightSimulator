@@ -182,11 +182,11 @@ void tick_input(GLFWwindow *window) {
     }
 
     if (q) {
-        plane.roll += 1;
+        plane.roll -= 1;
     }
 
     if (e) {
-        plane.roll -= 1;
+        plane.roll += 1;
     }
 
 
@@ -200,7 +200,7 @@ void tick_input(GLFWwindow *window) {
         }
     }
 
-    if (!left and !right) {
+    if (!left and !right and !q and !e) {
         if (plane.roll > 0) {
             plane.roll--;
         }
@@ -234,7 +234,7 @@ void tick_elements() {
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->tick();
         if (i->detect_collision(plane)) {
-            //cout << "Teri Maa CHud Gyi" << endl;
+            cout << "Teri Maa CHud Gyi" << endl;
         }
     }
 
