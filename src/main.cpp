@@ -107,6 +107,10 @@ void updatecam() {
         eye = glm::vec3(10, 10, 10);    //Tower
         target = plane.position;
     }
+    else if (camera_view == 3) {
+        eye = glm::vec3(plane.position.x + 2.5 * cos(plane.pitch * M_PI / 180), plane.position.y + 1, plane.position.z - 2.5 * sin(plane.pitch * M_PI / 180));
+        target = glm::vec3(plane.position.x + 4 * cos(plane.pitch * M_PI / 180), plane.position.y , plane.position.z - 4 * sin(plane.pitch * M_PI / 180));
+    }
 }
 
 void tick_input(GLFWwindow *window) {
@@ -133,6 +137,11 @@ void tick_input(GLFWwindow *window) {
         else if (camera_view == 2) {
             eye = glm::vec3(5, 5, 5); //Tower
             target = plane.position;
+            camera_view = 3;
+        }
+        else if (camera_view == 3) {
+            eye = glm::vec3(plane.position.x + 2 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z + 2 * sin(plane.pitch * M_PI / 180));
+            target = glm::vec3(plane.position.x + 4 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z + 4 * sin(plane.pitch * M_PI / 180));
             camera_view = 0;
         }
         CAMERA_CHANGE_VAR = 1;
@@ -224,14 +233,15 @@ void tick_elements() {
     }
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->tick();
-        i->detect_collision(plane);
+        if (i->detect_collision(plane)) {
+            //cout << "Teri Maa CHud Gyi" << endl;
+        }
     }
 
     if (num_ticks % 120 == 0) {
         ll n = rand() % 10;
         glm::vec3 planevec = plane.position - canons[n].position;
         CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
-        cout << c1.position.x << '\t' << c1.position.y << '\t' << c1.position.z << endl;
         balls.push_back(c1);
     }
     //camera_rotation_angle += 1;

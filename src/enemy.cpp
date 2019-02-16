@@ -303,7 +303,7 @@ void Canon::drawdisc(glm::mat4 VP) {
 }
 
 bool CanonBall::detect_collision(Plane plane) {
-    glm::vec3 b = glm::vec3 (plane.position.x + 3 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z + 3 * sin(plane.pitch * M_PI / 180));
+    glm::vec3 b = glm::vec3 (plane.position.x + 3 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z - 3 * sin(plane.pitch * M_PI / 180));
     glm::vec3 c = plane.position;
     glm::vec3 a = this->position;
 
@@ -315,8 +315,11 @@ bool CanonBall::detect_collision(Plane plane) {
     glm::vec3 p = b + glm::vec3(t * d.x, t * d.y, t * d.z);
     double dist = glm::distance(p, a);
 
-    if (dist <= 1) {
-        std::cout << dist << std::endl;
+    if (dist <= 1 && ((this->position.x - (plane.position.x + 3)) * (this->position.x - (plane.position.x - 2)) < 0)) {
+        return true;
+    }
+    else {
+        return false;
     }
 
 
