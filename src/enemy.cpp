@@ -302,6 +302,26 @@ void Canon::drawdisc(glm::mat4 VP) {
     draw3DObject(this->disc);
 }
 
+bool CanonBall::detect_collision(Plane plane) {
+    glm::vec3 b = glm::vec3 (plane.position.x + 3 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z + 3 * sin(plane.pitch * M_PI / 180));
+    glm::vec3 c = plane.position;
+    glm::vec3 a = this->position;
+
+    glm::vec3 d = (c - b) / glm::distance(c, b);
+    glm::vec3 v = a - b;
+
+    double t = glm::dot(v, d);
+
+    glm::vec3 p = b + glm::vec3(t * d.x, t * d.y, t * d.z);
+    double dist = glm::distance(p, a);
+
+    if (dist <= 1) {
+        std::cout << dist << std::endl;
+    }
+
+
+}
+
 CanonBall::CanonBall(float x, float y, float z, glm::vec3 planevec) {
     this->position = glm::vec3(x, y, z);
     this->velocity = glm::vec3(planevec.x / 15, planevec.y / 15, planevec.z / 15);

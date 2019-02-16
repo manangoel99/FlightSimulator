@@ -54,6 +54,7 @@ class CanonBall {
         glm::vec3 position;
         float rotation;
         void draw(glm::mat4 VP);
+        bool detect_collision(Plane plane);
         void tick();
         glm::vec3 velocity;
         glm::vec3 acc;

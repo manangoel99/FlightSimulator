@@ -88,6 +88,7 @@ void draw() {
 
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->draw(VP);
+
     }
 
     plane.draw(VP);
@@ -223,6 +224,7 @@ void tick_elements() {
     }
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->tick();
+        i->detect_collision(plane);
     }
 
     if (num_ticks % 120 == 0) {
