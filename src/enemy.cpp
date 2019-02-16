@@ -189,7 +189,7 @@ Canon::Canon (float x, float y, float z) {
         coord[i + 1] = r * sin(theta);
         coord[i + 2] = r * cos(theta);
 
-        coord[i + 3] = 0.5;
+        coord[i + 3] = 1;
         coord[i + 4] = r * sin(theta);
         coord[i + 5] = r * cos(theta);
 
@@ -201,11 +201,11 @@ Canon::Canon (float x, float y, float z) {
         coord[i + 10] = r * sin(theta + (2 * M_PI) / n);
         coord[i + 11] = r * cos(theta + (2 * M_PI) / n);
 
-        coord[i + 12] = 0.5;
+        coord[i + 12] = 1;
         coord[i + 13] = r * sin(theta);
         coord[i + 14] = r * cos(theta);
 
-        coord[i + 15] = 0.5;
+        coord[i + 15] = 1;
         coord[i + 16] = r * sin(theta + (2 * M_PI) / n);
         coord[i + 17] = r * cos(theta + (2 * M_PI) / n);
 
@@ -220,7 +220,7 @@ Canon::Canon (float x, float y, float z) {
         coord[i + 1] = r * sin(theta);
         coord[i + 2] = r * cos(theta);
 
-        coord[i + 3] = -0.5;
+        coord[i + 3] = -1;
         coord[i + 4] = r * sin(theta);
         coord[i + 5] = r * cos(theta);
 
@@ -232,24 +232,49 @@ Canon::Canon (float x, float y, float z) {
         coord[i + 10] = r * sin(theta + (2 * M_PI) / n);
         coord[i + 11] = r * cos(theta + (2 * M_PI) / n);
 
-        coord[i + 12] = -0.5;
+        coord[i + 12] = -1;
         coord[i + 13] = r * sin(theta);
         coord[i + 14] = r * cos(theta);
 
-        coord[i + 15] = -0.5;
+        coord[i + 15] = -1;
         coord[i + 16] = r * sin(theta + (2 * M_PI) / n);
         coord[i + 17] = r * cos(theta + (2 * M_PI) / n);
 
         theta += ((2 * M_PI) / n);
     }
 
+    GLfloat second_arr[10000];
+
+    theta = 0;
+
+    n = 1000;
+
+    r = 3;
+
+    for (ll i = 0; i < 9 * n; i += 9) {
+        second_arr[i] = r * cos(theta);
+        second_arr[i + 1] = 0.1;
+        second_arr[i + 2] = r * sin(theta);
+
+        second_arr[i + 3] = 0;
+        second_arr[i + 4] = 0.1;
+        second_arr[i + 5] = 0;
+
+        second_arr[i + 6] = r * cos(theta + (2 * M_PI / n));
+        second_arr[i + 7] = 0.1;
+        second_arr[i + 8] = r * sin(theta + (2 * M_PI / n));
+
+        theta += (2 * M_PI / n);
+    }
+
+
     this->object = create3DObject(GL_TRIANGLES, 12 * n, coord, COLOR_BLACK, GL_FILL);
+    this->disc = create3DObject(GL_TRIANGLES, 3 * n, second_arr, COLOR_GREY, GL_FILL);
 }
 
 void Canon::draw(glm::mat4 VP, glm::vec3 planevec) {
     Matrices.model = glm::mat4(1.0f);
     glm::mat4 translate = glm::translate(this->position); // glTranslatef
-    //glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(0, 0, 1));
     
     float angle1 = atan2(planevec.y, planevec.x);
     
@@ -266,11 +291,23 @@ void Canon::draw(glm::mat4 VP, glm::vec3 planevec) {
     draw3DObject(this->object);
 }
 
+void Canon::drawdisc(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->position); // glTranslatef
+    glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(0, 0, 1));
+
+    Matrices.model *= translate * rotate;
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->disc);
+}
+
 CanonBall::CanonBall(float x, float y, float z, glm::vec3 planevec) {
-    this->velocity = glm::vec3(planevec.x / 10, planevec.y / 10, planevec.z / 10);
+    this->position = glm::vec3(x, y, z);
+    this->velocity = glm::vec3(planevec.x / 15, planevec.y / 15, planevec.z / 15);
     this->rotation = 0;
 
-    this->acc = glm::vec3(0, -0.05, 0);
+    this->acc = glm::vec3(0, -0.0125, 0);
 
     static const GLfloat vertex_buffer_data[] = {
         -0.2f,-0.2f,-0.2f, // triangle 1 : begin
@@ -311,6 +348,7 @@ CanonBall::CanonBall(float x, float y, float z, glm::vec3 planevec) {
         0.2f,-0.2f, 0.2f
     };
 
+    
     this->object = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data, COLOR_GREEN, GL_FILL);
 
 }

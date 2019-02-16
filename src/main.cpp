@@ -80,13 +80,14 @@ void draw() {
         i->draw(VP);
     }
 
-    for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
-        glm::vec3 planevec = glm::vec3(plane.position.x - it->position.x, plane.position.y - it->position.y, plane.position.z - it->position.z);
-        it->draw(VP, planevec);
+    for (vector <Canon>::iterator i = canons.begin(); i != canons.end(); i++) {
+        glm::vec3 planevec = plane.position - i->position;
+        i->draw(VP, planevec);
+        i->drawdisc(VP);
     }
 
-    for (vector <CanonBall>::iterator it = balls.begin(); it != balls.end(); it++) {
-        it->draw(VP);
+    for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
+        i->draw(VP);
     }
 
     plane.draw(VP);
@@ -220,25 +221,16 @@ void tick_elements() {
             quit(window);
         }
     }
-
-    if (num_ticks % 100 == 0) {
-        //CanonBall c1 = CanonBall(c.position.x, c.position.y, c.position.z, plane.position);
-        //balls.push_back(c1);
-        //cout << c1.rotation << endl;
-        int n = rand() % 10;
-        glm::vec3 planevec = glm::vec3(plane.position.x - canons[n].position.x, plane.position.y - canons[n].position.y, plane.position.z - canons[n].position.z);
-        CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
-        balls.push_back(c1);
-        cout << n << endl;
+    for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
+        i->tick();
     }
 
-    for (vector <CanonBall>::iterator it = balls.begin(); it != balls.end(); it++) {
-        it->tick();
-        if (it->position.y < -4) {
-            balls.erase(it);
-            it--;
-        }
-        //cout << it->position.x << '\t' << it->position.y << '\t' << it->position.z << endl;
+    if (num_ticks % 120 == 0) {
+        ll n = rand() % 10;
+        glm::vec3 planevec = plane.position - canons[n].position;
+        CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
+        cout << c1.position.x << '\t' << c1.position.y << '\t' << c1.position.z << endl;
+        balls.push_back(c1);
     }
     //camera_rotation_angle += 1;
 }
@@ -265,7 +257,8 @@ void initGL(GLFWwindow *window, int width, int height) {
     }
 
     for (ll i = 0; i < 10; i++) {
-        Canon c = Canon(rand() % 300, -3, rand() % 300);
+        Canon c = Canon(rand() % 300, -4, rand() % 300);
+        cout << c.position.x << '\t' << c.position.y << '\t' << c.position.z << endl;
         canons.push_back(c);
     }
 

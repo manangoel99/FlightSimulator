@@ -41,8 +41,10 @@ class Canon {
         glm::vec3 position;
         float rotation;
         void draw(glm::mat4 VP, glm::vec3 planevec);
+        void drawdisc(glm::mat4 VP);
     private:
         VAO *object;
+        VAO *disc;
 };
 
 class CanonBall {
