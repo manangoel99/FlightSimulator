@@ -28,6 +28,7 @@ vector <Canon> canons;
 vector <CanonBall> balls;
 ll num_ticks = 0;
 LifeBar lifebar;
+HeightBar heightbar;
 int camera_view = 0;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
@@ -97,6 +98,7 @@ void draw() {
 
     }
     lifebar.draw(VP1);
+    heightbar.draw(VP1);
     plane.draw(VP);
 }
 
@@ -240,9 +242,9 @@ void tick_elements() {
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->tick();
         if (i->detect_collision(plane)) {
-            cout << "TERI MAA CHUD GYI" << endl;
+            //cout << "TERI MAA CHUD GYI" << endl;
             plane.life -= 5;
-            cout << plane.life << endl;
+            //cout << plane.life << endl;
             balls.erase(i);
             i--;
             break;
@@ -251,12 +253,25 @@ void tick_elements() {
 
     if (num_ticks % 120 == 0) {
         ll n = rand() % 10;
-        glm::vec3 planevec = plane.position - canons[n].position;
+
+        int x = rand() % 3;
+
+        glm::vec3 planevec;
+
+        if (x == 0) {
+            planevec = plane.position - canons[n].position + glm::vec3(0, 0.2, 0);
+        }
+        else if (x == 1) {
+            planevec = plane.position - canons[n].position;
+        } else if (x == 2) {
+            planevec = plane.position - canons[n].position - glm::vec3(0, 0.2, 0);
+        }
         CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
         balls.push_back(c1);
     }
 
     lifebar.CreateLifeObject(plane);
+    heightbar.UpdateBar(plane);
     //camera_rotation_angle += 1;
 }
 
@@ -267,10 +282,11 @@ void initGL(GLFWwindow *window, int width, int height) {
     // Create the models
 
     ball1       = Ball(0, 2, COLOR_RED);
-    plane       = Plane(0, 1, 0, COLOR_BLACK);
+    plane       = Plane(0, 20, 0, COLOR_BLACK);
     sea         = Sea(0, 0, 0, COLOR_BLUE);
     //c           = Canon(0 , 0, 0);
     lifebar     = LifeBar(-12, 11, 0);
+    heightbar   = HeightBar(-12, 10, 0);
     lifebar.CreateLifeObject(plane);
 
     for (ll i = 0; i < 50; i++) {
