@@ -15,6 +15,7 @@ Plane::Plane(float x, float y, float z, color_t color) {
     this->roll = 0;
     this->pitch = 0;
     this->yaw = 0;
+    this->life = 40;
 
     float theta = 0;
 

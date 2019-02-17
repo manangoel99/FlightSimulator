@@ -4,12 +4,14 @@
 #include "plane.h"
 #include "sea.h"
 #include "enemy.h"
+#include "dashboard.h"
 
 #define ll long long
 
 using namespace std;
 
 GLMatrices Matrices;
+GLMatrices Matrices1;
 GLuint     programID;
 GLFWwindow *window;
 
@@ -25,7 +27,7 @@ vector <Volcano> vols;
 vector <Canon> canons;
 vector <CanonBall> balls;
 ll num_ticks = 0;
-
+LifeBar lifebar;
 int camera_view = 0;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
@@ -57,11 +59,15 @@ void draw() {
     // Compute Camera matrix (view)
     Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
     // Don't change unless you are sure!!
-    // Matrices.view = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); // Fixed camera for 2D (ortho) in XY plane
-
+    glm::vec3 up1(0, 1, 0);
+    glm::vec3 eye1(0, 0, 5);
+    glm::vec3 target1(0, 0, 0);
+    //Matrices1.view = glm::lookAt(glm::vec3(0, 0, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)); // Fixed camera for 2D (ortho) in XY plane
+    Matrices1.view = glm::lookAt(eye1, target1, up1);
     // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
     // Don't change unless you are sure!!
     glm::mat4 VP = Matrices.projection * Matrices.view;
+    glm::mat4 VP1 = Matrices.projection * Matrices1.view;
 
     // Send our transformation to the currently bound shader, in the "MVP" uniform
     // For each model you render, since the MVP will be different (at least the M part)
@@ -90,7 +96,7 @@ void draw() {
         i->draw(VP);
 
     }
-
+    lifebar.draw(VP1);
     plane.draw(VP);
 }
 
@@ -234,7 +240,12 @@ void tick_elements() {
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->tick();
         if (i->detect_collision(plane)) {
-            cout << "Teri Maa CHud Gyi" << endl;
+            cout << "TERI MAA CHUD GYI" << endl;
+            plane.life -= 5;
+            cout << plane.life << endl;
+            balls.erase(i);
+            i--;
+            break;
         }
     }
 
@@ -244,6 +255,8 @@ void tick_elements() {
         CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
         balls.push_back(c1);
     }
+
+    lifebar.CreateLifeObject(plane);
     //camera_rotation_angle += 1;
 }
 
@@ -257,6 +270,8 @@ void initGL(GLFWwindow *window, int width, int height) {
     plane       = Plane(0, 1, 0, COLOR_BLACK);
     sea         = Sea(0, 0, 0, COLOR_BLUE);
     //c           = Canon(0 , 0, 0);
+    lifebar     = LifeBar(-12, 11, 0);
+    lifebar.CreateLifeObject(plane);
 
     for (ll i = 0; i < 50; i++) {
         SmokeRing r = SmokeRing(rand() % 300, rand() % 30, rand() % 300);
@@ -337,6 +352,6 @@ void reset_screen() {
     float bottom = screen_center_y - 4 / screen_zoom;
     float left   = screen_center_x - 4 / screen_zoom;
     float right  = screen_center_x + 4 / screen_zoom;
-    Matrices.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
+    Matrices1.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
     Matrices.projection = glm::perspective(135 * M_PI / 180, 1.0, 0.1, 100.0);
 }

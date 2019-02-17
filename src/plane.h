@@ -16,6 +16,7 @@ class Plane {
         float roll;
         float pitch;
         float yaw;
+        int life;
         glm::vec3 acceleration;
     private:
         VAO *object;
