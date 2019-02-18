@@ -50,3 +50,17 @@ void Bomb::tick() {
     this->position += this->velocity;
     this->velocity += this->acc;
 }
+
+bool Bomb::detect_collision(Canon canon) {
+    float z = (this->position.x - canon.position.x) * (this->position.x - canon.position.x);
+    z += (this->position.z - canon.position.z) * (this->position.z - canon.position.z);
+
+    z = z - 9;
+
+    if (z <= 0 and this->position.y - 2 <= 0.1) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}

@@ -277,6 +277,13 @@ void tick_elements() {
             MousePress = false;
             break;
         }
+        for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
+            if(i->detect_collision(*it)) {
+                canons.erase(it);
+                it--;
+                break;
+            }
+        }
     }
 
     if (num_ticks % 120 == 0) {
