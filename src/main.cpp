@@ -5,6 +5,7 @@
 #include "sea.h"
 #include "enemy.h"
 #include "dashboard.h"
+#include "weaponry.h"
 
 #define ll long long
 
@@ -22,13 +23,18 @@ GLFWwindow *window;
 Ball ball1;
 Plane plane;
 Sea sea;
+
 vector <SmokeRing> rings;
 vector <Volcano> vols;
 vector <Canon> canons;
 vector <CanonBall> balls;
+vector <Bomb> bombs;
+
 ll num_ticks = 0;
 LifeBar lifebar;
 HeightBar heightbar;
+
+bool MousePress = false;
 int camera_view = 0;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
@@ -97,6 +103,11 @@ void draw() {
         i->draw(VP);
 
     }
+
+    for (vector <Bomb>::iterator i = bombs.begin(); i != bombs.end(); i++) {
+        i->draw(VP);
+    }
+
     lifebar.draw(VP1);
     heightbar.draw(VP1);
     plane.draw(VP);
@@ -130,6 +141,8 @@ void tick_input(GLFWwindow *window) {
     int forward = glfwGetKey(window, GLFW_KEY_W);
     int q = glfwGetKey(window, GLFW_KEY_Q);
     int e = glfwGetKey(window, GLFW_KEY_E);
+    int left_click = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    int right_click = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 
     if (c == GLFW_PRESS && CAMERA_CHANGE_VAR == 0) {
         if (camera_view == 0) {         //Follow-Cam
@@ -156,6 +169,12 @@ void tick_input(GLFWwindow *window) {
     }
     else if (c == GLFW_RELEASE) {
         CAMERA_CHANGE_VAR = 0;
+    }
+
+    if (left_click && MousePress == false) {
+        Bomb b = Bomb(plane.position.x, plane.position.y, plane.position.z, plane);
+        bombs.push_back(b);
+        MousePress = true;
     }
 
     if (up) {
@@ -247,6 +266,15 @@ void tick_elements() {
             //cout << plane.life << endl;
             balls.erase(i);
             i--;
+            break;
+        }
+    }
+    for (vector <Bomb>::iterator i = bombs.begin(); i != bombs.end(); i++) {
+        i->tick();
+        if (i->position.y <= -4) {
+            bombs.erase(i);
+            i--;
+            MousePress = false;
             break;
         }
     }
