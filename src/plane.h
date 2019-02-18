@@ -22,6 +22,8 @@ class Plane {
         VAO *object;
         VAO *finobj;
         VAO *wingobj;
+        VAO *leftmissileobj;
+        VAO *rightmissileobj;
 };
 
 #endif // !PLANE_H
