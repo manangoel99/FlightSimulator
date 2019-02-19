@@ -335,42 +335,42 @@ CanonBall::CanonBall(float x, float y, float z, glm::vec3 planevec) {
     this->acc = glm::vec3(0, -0.0125, 0);
 
     static const GLfloat vertex_buffer_data[] = {
-        -0.2f,-0.2f,-0.2f, // triangle 1 : begin
-        -0.2f,-0.2f, 0.2f,
-        -0.2f, 0.2f, 0.2f, // triangle 1 : end
-        0.2f, 0.2f,-0.2f, // triangle 2 : begin
-        -0.2f,-0.2f,-0.2f,
-        -0.2f, 0.2f,-0.2f, // triangle 2 : end
-        0.2f,-0.2f, 0.2f,
-        -0.2f,-0.2f,-0.2f,
-        0.2f,-0.2f,-0.2f,
-        0.2f, 0.2f,-0.2f,
-        0.2f,-0.2f,-0.2f,
-        -0.2f,-0.2f,-0.2f,
-        -0.2f,-0.2f,-0.2f,
-        -0.2f, 0.2f, 0.2f,
-        -0.2f, 0.2f,-0.2f,
-        0.2f,-0.2f, 0.2f,
-        -0.2f,-0.2f, 0.2f,
-        -0.2f,-0.2f,-0.2f,
-        -0.2f, 0.2f, 0.2f,
-        -0.2f,-0.2f, 0.2f,
-        0.2f,-0.2f, 0.2f,
-        0.2f, 0.2f, 0.2f,
-        0.2f,-0.2f,-0.2f,
-        0.2f, 0.2f,-0.2f,
-        0.2f,-0.2f,-0.2f,
-        0.2f, 0.2f, 0.2f,
-        0.2f,-0.2f, 0.2f,
-        0.2f, 0.2f, 0.2f,
-        0.2f, 0.2f,-0.2f,
-        -0.2f, 0.2f,-0.2f,
-        0.2f, 0.2f, 0.2f,
-        -0.2f, 0.2f,-0.2f,
-        -0.2f, 0.2f, 0.2f,
-        0.2f, 0.2f, 0.2f,
-        -0.2f, 0.2f, 0.2f,
-        0.2f,-0.2f, 0.2f
+        -0.4f,-0.4f,-0.4f, // triangle 1 : begin
+        -0.4f,-0.4f, 0.4f,
+        -0.4f, 0.4f, 0.4f, // triangle 1 : end
+        0.4f, 0.4f,-0.4f, // triangle 2 : begin
+        -0.4f,-0.4f,-0.4f,
+        -0.4f, 0.4f,-0.4f, // triangle 2 : end
+        0.4f,-0.4f, 0.4f,
+        -0.4f,-0.4f,-0.4f,
+        0.4f,-0.4f,-0.4f,
+        0.4f, 0.4f,-0.4f,
+        0.4f,-0.4f,-0.4f,
+        -0.4f,-0.4f,-0.4f,
+        -0.4f,-0.4f,-0.4f,
+        -0.4f, 0.4f, 0.4f,
+        -0.4f, 0.4f,-0.4f,
+        0.4f,-0.4f, 0.4f,
+        -0.4f,-0.4f, 0.4f,
+        -0.4f,-0.4f,-0.4f,
+        -0.4f, 0.4f, 0.4f,
+        -0.4f,-0.4f, 0.4f,
+        0.4f,-0.4f, 0.4f,
+        0.4f, 0.4f, 0.4f,
+        0.4f,-0.4f,-0.4f,
+        0.4f, 0.4f,-0.4f,
+        0.4f,-0.4f,-0.4f,
+        0.4f, 0.4f, 0.4f,
+        0.4f,-0.4f, 0.4f,
+        0.4f, 0.4f, 0.4f,
+        0.4f, 0.4f,-0.4f,
+        -0.4f, 0.4f,-0.4f,
+        0.4f, 0.4f, 0.4f,
+        -0.4f, 0.4f,-0.4f,
+        -0.4f, 0.4f, 0.4f,
+        0.4f, 0.4f, 0.4f,
+        -0.4f, 0.4f, 0.4f,
+        0.4f,-0.4f, 0.4f
     };
 
     
@@ -522,4 +522,95 @@ void Parachute::draw(glm::mat4 VP) {
 void Parachute::tick() {
     this->position += this->velocity;
     this->velocity += this->acc;
+}
+
+Bullet::Bullet(float x, float y, float z, glm::vec3 planevec) {
+    this->position = glm::vec3(x, y, z);
+    this->velocity = glm::vec3(planevec.x / 15, planevec.y / 15, planevec.z / 15);
+    this->rotation = 0;
+
+    this->acc = glm::vec3(0, -0.0125, 0);
+
+    static const GLfloat vertex_buffer_data[] = {
+        -0.25f,-0.25f,-0.25f, // triangle 1 : begin
+        -0.25f,-0.25f, 0.25f,
+        -0.25f, 0.25f, 0.25f, // triangle 1 : end
+        0.25f, 0.25f,-0.25f, // triangle 2 : begin
+        -0.25f,-0.25f,-0.25f,
+        -0.25f, 0.25f,-0.25f, // triangle 2 : end
+        0.25f,-0.25f, 0.25f,
+        -0.25f,-0.25f,-0.25f,
+        0.25f,-0.25f,-0.25f,
+        0.25f, 0.25f,-0.25f,
+        0.25f,-0.25f,-0.25f,
+        -0.25f,-0.25f,-0.25f,
+        -0.25f,-0.25f,-0.25f,
+        -0.25f, 0.25f, 0.25f,
+        -0.25f, 0.25f,-0.25f,
+        0.25f,-0.25f, 0.25f,
+        -0.25f,-0.25f, 0.25f,
+        -0.25f,-0.25f,-0.25f,
+        -0.25f, 0.25f, 0.25f,
+        -0.25f,-0.25f, 0.25f,
+        0.25f,-0.25f, 0.25f,
+        0.25f, 0.25f, 0.25f,
+        0.25f,-0.25f,-0.25f,
+        0.25f, 0.25f,-0.25f,
+        0.25f,-0.25f,-0.25f,
+        0.25f, 0.25f, 0.25f,
+        0.25f,-0.25f, 0.25f,
+        0.25f, 0.25f, 0.25f,
+        0.25f, 0.25f,-0.25f,
+        -0.25f, 0.25f,-0.25f,
+        0.25f, 0.25f, 0.25f,
+        -0.25f, 0.25f,-0.25f,
+        -0.25f, 0.25f, 0.25f,
+        0.25f, 0.25f, 0.25f,
+        -0.25f, 0.25f, 0.25f,
+        0.25f,-0.25f, 0.25f
+    };
+
+    color_t COLOR_YELLOW = {
+        255, 255, 0,
+    };
+
+    this->object = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data, COLOR_YELLOW, GL_FILL);
+}
+
+void Bullet::draw(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->position); // glTranslatef
+    glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(1, 0, 0));
+    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
+    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
+    Matrices.model *= (translate * rotate);
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->object);
+}
+
+void Bullet::tick() {
+    this->position += this->velocity;
+    this->velocity += this->acc;
+}
+
+bool Bullet::detect_collision(Plane plane) {
+    glm::vec3 b = glm::vec3 (plane.position.x + 3 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z - 3 * sin(plane.pitch * M_PI / 180));
+    glm::vec3 c = plane.position;
+    glm::vec3 a = this->position;
+
+    glm::vec3 d = (c - b) / glm::distance(c, b);
+    glm::vec3 v = a - b;
+
+    double t = glm::dot(v, d);
+
+    glm::vec3 p = b + glm::vec3(t * d.x, t * d.y, t * d.z);
+    double dist = glm::distance(p, a);
+
+    if (dist <= 1 && ((this->position.x - (plane.position.x + 3)) * (this->position.x - (plane.position.x - 2)) < 0)) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }

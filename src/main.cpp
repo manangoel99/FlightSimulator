@@ -31,6 +31,7 @@ vector <CanonBall> balls;
 vector <Bomb> bombs;
 vector <Missile> missiles;
 vector <Parachute> parachutes;
+vector <Bullet> bullets;
 
 ll num_ticks = 0;
 LifeBar lifebar;
@@ -116,6 +117,10 @@ void draw() {
     }
 
     for (vector <Parachute>::iterator i = parachutes.begin(); i != parachutes.end(); i++) {
+        i->draw(VP);
+    }
+
+    for (vector <Bullet>::iterator i = bullets.begin(); i != bullets.end(); i++) {
         i->draw(VP);
     }
 
@@ -328,7 +333,32 @@ void tick_elements() {
     if (num_ticks % 247 == 0) {
         Parachute p = Parachute(rand() % 300, 40, rand() % 300);
         parachutes.push_back(p);
-    } 
+    }
+
+    if (num_ticks % 127 == 0) {
+
+        ll z = parachutes.size();
+        ll n;
+        if (z != 0) {
+            n = rand() % z;
+
+            int x = rand() % 3;
+    
+            glm::vec3 planevec;
+
+            if (x == 0) {
+                planevec = plane.position - parachutes[n].position + glm::vec3(0, 0.2, 0);
+            }
+            else if (x == 1) {
+                planevec = plane.position - parachutes[n].position;
+            } else if (x == 2) {
+                planevec = plane.position - parachutes[n].position - glm::vec3(0, 0.2, 0);
+            }
+
+            Bullet b = Bullet(parachutes[n].position.x, parachutes[n].position.y, parachutes[n].position.y, planevec);
+            bullets.push_back(b);
+        }
+    }
 
     for (vector <Missile>::iterator i = missiles.begin(); i != missiles.end(); i++) {
         i->tick();
@@ -367,6 +397,16 @@ void tick_elements() {
         if (it->position.y <= -7) {
             parachutes.erase(it);
             it--;
+            break;
+        }
+    }
+
+    for (vector <Bullet>::iterator i = bullets.begin(); i != bullets.end(); i++) {
+        i->tick();
+        if (i->detect_collision(plane)) {
+            plane.life--;
+            bullets.erase(i);
+            i--;
             break;
         }
     }

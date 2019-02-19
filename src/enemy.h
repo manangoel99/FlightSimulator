@@ -78,4 +78,19 @@ class Parachute {
         VAO *RopeObject;
 };
 
+class Bullet {
+    public:
+        Bullet() {}
+        Bullet(float x, float y, float z, glm::vec3 planevec);
+        glm::vec3 position;
+        float rotation;
+        void draw(glm::mat4 VP);
+        void tick();
+        glm::vec3 velocity;
+        glm::vec3 acc;
+        bool detect_collision(Plane plane);
+    private:
+        VAO *object;
+};
+
 #endif // !ENEMIES_H
