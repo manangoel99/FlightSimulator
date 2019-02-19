@@ -36,6 +36,8 @@ vector <Bullet> bullets;
 ll num_ticks = 0;
 LifeBar lifebar;
 HeightBar heightbar;
+Compass compass;
+FuelGauge fuelgauge;
 
 bool MousePress = false;
 int camera_view = 0;
@@ -45,6 +47,7 @@ float camera_rotation_angle = 0;
 float heli_rad = 5.0f;
 
 Timer t60(1.0 / 60);
+Timer t1(1.0 / 1);
 
 int CAMERA_CHANGE_VAR = 0;
 
@@ -90,7 +93,9 @@ void draw() {
     // Scene render
     //ball1.draw(VP);
     sea.draw(VP);
+    compass.draw(VP1);
     //c.draw(VP, plane.position);
+    fuelgauge.draw(VP1);
 
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         it->draw(VP);
@@ -154,8 +159,8 @@ void updatecam() {
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
 
-        double phi = 0.01 * (400 - xpos);
-        double theta = 0.01 * (400 - ypos);
+        double phi = 0.01 * (540 - xpos);
+        double theta = 0.01 * (540 - ypos);
 
         eye = glm::vec3(plane.position.x + heli_rad * cos(theta) * sin(phi), plane.position.y + heli_rad * sin(theta), plane.position.z + heli_rad * cos(theta) * cos(phi));
 
@@ -298,6 +303,10 @@ void tick_elements() {
     updatecam();
 
     num_ticks++;
+
+    compass.set_rotation(plane);
+
+    fuelgauge.set_fuel(plane);
 
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         if(it->DetectPassing(plane) == true) {
@@ -458,6 +467,8 @@ void initGL(GLFWwindow *window, int width, int height) {
     lifebar     = LifeBar(-12, 11, 0);
     heightbar   = HeightBar(-12, 10, 0);
     lifebar.CreateLifeObject(plane);
+    compass     = Compass(10, 10, 0);
+    fuelgauge   = FuelGauge(-12, 9, 0, plane);
 
     for (ll i = 0; i < 50; i++) {
         SmokeRing r = SmokeRing(rand() % 300, rand() % 30, rand() % 300);
@@ -519,6 +530,10 @@ int main(int argc, char **argv) {
 
             tick_elements();
             tick_input(window);
+        }
+
+        if (t1.processTick()) {
+            plane.fuel -= 0.0001;
         }
 
         // Poll for Keyboard and mouse events
