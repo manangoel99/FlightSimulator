@@ -64,3 +64,240 @@ bool Bomb::detect_collision(Canon canon) {
         return false;
     }
 }
+
+Missile::Missile(Plane plane) {
+    this->left_position = glm::vec3(plane.position.x, plane.position.y, plane.position.z);
+    this->right_position = glm::vec3(plane.position.x, plane.position.y, plane.position.z);
+    this->pitch = plane.pitch;
+    this->yaw = plane.yaw;
+    this->roll = plane.roll;
+    this->acc = glm::vec3(0, -0.05, 0);
+
+    this->velocity = glm::vec3(5 * (cos(plane.pitch * (M_PI / 180)) * cos(plane.yaw * (M_PI / 180))), 5 * sin(plane.yaw * (M_PI / 180)), -5 * sin(plane.pitch * M_PI / 180));
+
+    GLfloat left_coord_missile[50000];
+
+    float theta = 0;
+
+    float r = 0.25f;
+
+    ll n = 1000;
+
+    for (ll i = 0; i < 9 * n; i += 9)
+    {
+        left_coord_missile[i] = 1;
+        left_coord_missile[i + 1] = r * sin(theta);
+        left_coord_missile[i + 2] = r * cos(theta);
+        left_coord_missile[i + 3] = 1.5;
+        left_coord_missile[i + 4] = 0;
+        left_coord_missile[i + 5] = 0;
+        left_coord_missile[i + 6] = 1;
+        left_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    theta = 0;
+
+    for (ll i = 9 * n; i < 27 * n; i += 18)
+    {
+        left_coord_missile[i] = 0;
+        left_coord_missile[i + 1] = r * sin(theta);
+        left_coord_missile[i + 2] = r * cos(theta);
+
+        left_coord_missile[i + 3] = 1;
+        left_coord_missile[i + 4] = r * sin(theta);
+        left_coord_missile[i + 5] = r * cos(theta);
+
+        left_coord_missile[i + 6] = 0;
+        left_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        left_coord_missile[i + 9] = 0;
+        left_coord_missile[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        left_coord_missile[i + 12] = 1;
+        left_coord_missile[i + 13] = r * sin(theta);
+        left_coord_missile[i + 14] = r * cos(theta);
+
+        left_coord_missile[i + 15] = 1;
+        left_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    theta = 0;
+
+    for (ll i = 27 * n; i < 45 * n; i += 18)
+    {
+        left_coord_missile[i] = 0;
+        left_coord_missile[i + 1] = r * sin(theta);
+        left_coord_missile[i + 2] = r * cos(theta);
+
+        left_coord_missile[i + 3] = -1;
+        left_coord_missile[i + 4] = r * sin(theta);
+        left_coord_missile[i + 5] = r * cos(theta);
+
+        left_coord_missile[i + 6] = 0;
+        left_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        left_coord_missile[i + 9] = 0;
+        left_coord_missile[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        left_coord_missile[i + 12] = -1;
+        left_coord_missile[i + 13] = r * sin(theta);
+        left_coord_missile[i + 14] = r * cos(theta);
+
+        left_coord_missile[i + 15] = -1;
+        left_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    for (ll i = 0; i < 45 * n; i++) {
+        if (i % 3 == 2) {
+            left_coord_missile[i] += 2.0f;
+        }
+        if (i % 3 == 1) {
+            left_coord_missile[i] -= 0.25f;
+        }
+    }
+
+    theta = 0;
+
+    GLfloat right_coord_missile[50000];
+
+    for (ll i = 0; i < 9 * n; i += 9)
+    {
+        right_coord_missile[i] = 1;
+        right_coord_missile[i + 1] = r * sin(theta);
+        right_coord_missile[i + 2] = r * cos(theta);
+        right_coord_missile[i + 3] = 1.5;
+        right_coord_missile[i + 4] = 0;
+        right_coord_missile[i + 5] = 0;
+        right_coord_missile[i + 6] = 1;
+        right_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    theta = 0;
+
+    for(ll i = 9 * n; i < 27 * n; i += 18)
+    {
+        right_coord_missile[i] = 0;
+        right_coord_missile[i + 1] = r * sin(theta);
+        right_coord_missile[i + 2] = r * cos(theta);
+
+        right_coord_missile[i + 3] = 1;
+        right_coord_missile[i + 4] = r * sin(theta);
+        right_coord_missile[i + 5] = r * cos(theta);
+
+        right_coord_missile[i + 6] = 0;
+        right_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        right_coord_missile[i + 9] = 0;
+        right_coord_missile[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        right_coord_missile[i + 12] = 1;
+        right_coord_missile[i + 13] = r * sin(theta);
+        right_coord_missile[i + 14] = r * cos(theta);
+
+        right_coord_missile[i + 15] = 1;
+        right_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+
+    theta = 0;
+
+    for (ll i = 27 * n; i < 45 * n; i += 18)
+    {
+        right_coord_missile[i] = 0;
+        right_coord_missile[i + 1] = r * sin(theta);
+        right_coord_missile[i + 2] = r * cos(theta);
+
+        right_coord_missile[i + 3] = -1;
+        right_coord_missile[i + 4] = r * sin(theta);
+        right_coord_missile[i + 5] = r * cos(theta);
+
+        right_coord_missile[i + 6] = 0;
+        right_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        right_coord_missile[i + 9] = 0;
+        right_coord_missile[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        right_coord_missile[i + 12] = -1;
+        right_coord_missile[i + 13] = r * sin(theta);
+        right_coord_missile[i + 14] = r * cos(theta);
+
+        right_coord_missile[i + 15] = -1;
+        right_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
+        theta += ((2 * M_PI) / n);
+    }
+    
+    for (ll i = 0; i < 45 * n; i++) {
+        if (i % 3 == 2) {
+            right_coord_missile[i] -= 2.0f;
+        }
+        if (i % 3 == 1) {
+            right_coord_missile[i] -= 0.25f;
+        }
+    }
+
+
+
+    this->left_object = create3DObject(GL_TRIANGLES, 15 * n + 3, left_coord_missile, COLOR_RED, GL_FILL);
+    this->right_object = create3DObject(GL_TRIANGLES, 15 * n + 3, right_coord_missile, COLOR_RED, GL_FILL);
+}
+
+void Missile::draw_left(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->left_position); // glTranslatef
+    //glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(1, 1, 1));
+    glm::mat4 mat_pitch = glm::rotate((float)(this->pitch * M_PI / 180.0f), glm::vec3(0, 1, 0));
+    glm::mat4 mat_roll = glm::rotate((float)(this->roll * M_PI / 180.0f), glm::vec3(1, 0, 0));
+    glm::mat4 mat_yaw = glm::rotate((float)(this->yaw * M_PI / 180.0f), glm::vec3(sin(M_PI * this->pitch / 180), 0, cos(M_PI * this->pitch / 180)));
+    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
+    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
+    Matrices.model *= (translate * mat_yaw * mat_pitch * mat_roll);
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->left_object);
+}
+
+void Missile::draw_right(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->right_position); // glTranslatef
+    //glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(1, 1, 1));
+    glm::mat4 mat_pitch = glm::rotate((float)(this->pitch * M_PI / 180.0f), glm::vec3(0, 1, 0));
+    glm::mat4 mat_roll = glm::rotate((float)(this->roll * M_PI / 180.0f), glm::vec3(1, 0, 0));
+    glm::mat4 mat_yaw = glm::rotate((float)(this->yaw * M_PI / 180.0f), glm::vec3(sin(M_PI * this->pitch / 180), 0, cos(M_PI * this->pitch / 180)));
+    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
+    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
+    Matrices.model *= (translate * mat_yaw * mat_pitch * mat_roll);
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->right_object);
+
+}
+
+void Missile::tick() {
+    this->left_position += this->velocity;
+    this->right_position += this->velocity;
+    this->velocity += this->acc;
+}

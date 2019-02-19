@@ -20,4 +20,24 @@ class Bomb {
         VAO *object;
 };
 
+class Missile {
+    public:
+        Missile() {}
+        Missile (Plane plane);
+        void draw_left(glm::mat4 VP);
+        void draw_right(glm::mat4 VP);
+        void tick();
+        glm::vec3 left_position;
+        glm::vec3 right_position;
+        float rotation;
+        float pitch;
+        float roll;
+        float yaw;
+        glm::vec3 velocity;
+        glm::vec3 acc;
+    private:
+        VAO *left_object;
+        VAO *right_object;
+};
+
 #endif // !WEAPONRY_H

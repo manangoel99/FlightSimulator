@@ -210,6 +210,8 @@ Plane::Plane(float x, float y, float z, color_t color) {
         }
     }
 
+    theta = 0;
+
     for (ll i = 0; i < 9 * n; i += 9)
     {
         right_coord_missile[i] = 1;

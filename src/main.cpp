@@ -29,6 +29,7 @@ vector <Volcano> vols;
 vector <Canon> canons;
 vector <CanonBall> balls;
 vector <Bomb> bombs;
+vector <Missile> missiles;
 
 ll num_ticks = 0;
 LifeBar lifebar;
@@ -108,6 +109,11 @@ void draw() {
         i->draw(VP);
     }
 
+    for (vector <Missile>::iterator i = missiles.begin(); i != missiles.end(); i++) {
+        i->draw_left(VP);
+        i->draw_right(VP);
+    }
+
     lifebar.draw(VP1);
     heightbar.draw(VP1);
     plane.draw(VP);
@@ -171,10 +177,20 @@ void tick_input(GLFWwindow *window) {
         CAMERA_CHANGE_VAR = 0;
     }
 
-    if (left_click && MousePress == false) {
+    if (left_click == GLFW_PRESS && MousePress == false) {
         Bomb b = Bomb(plane.position.x, plane.position.y, plane.position.z, plane);
         bombs.push_back(b);
         MousePress = true;
+    }
+
+    if (right_click == GLFW_PRESS && MousePress == false) {
+        Missile m = Missile(plane);
+        missiles.push_back(m);
+        MousePress = true;
+    }
+
+    if (right_click == GLFW_RELEASE && left_click == GLFW_RELEASE) {
+        MousePress = false;
     }
 
     if (up) {
@@ -228,10 +244,10 @@ void tick_input(GLFWwindow *window) {
     }
 
     if (!left and !right and !q and !e) {
-        if (plane.roll > 0) {
+        if (plane.roll > 0 && (int)(plane.roll) % 360 != 0) {
             plane.roll--;
         }
-        else if (plane.roll < 0) {
+        else if (plane.roll < 0 && (int)(plane.roll) % 360 != 0) {
             plane.roll++;
         }
     }
@@ -274,7 +290,6 @@ void tick_elements() {
         if (i->position.y <= -4) {
             bombs.erase(i);
             i--;
-            MousePress = false;
             break;
         }
         for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
@@ -303,6 +318,10 @@ void tick_elements() {
         }
         CanonBall c1 = CanonBall(canons[n].position.x, canons[n].position.y, canons[n].position.z, planevec);
         balls.push_back(c1);
+    }
+
+    for (vector <Missile>::iterator i = missiles.begin(); i != missiles.end(); i++) {
+        i->tick();
     }
 
     lifebar.CreateLifeObject(plane);
