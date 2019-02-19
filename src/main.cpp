@@ -42,6 +42,7 @@ int camera_view = 0;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
+float heli_rad = 5.0f;
 
 Timer t60(1.0 / 60);
 
@@ -52,6 +53,9 @@ glm::vec3 eye(-1.5, 3, 0);
 glm::vec3 target(0, 0, 0);
 // Up - Up vector defines tilt of camera.  Don't change unless you are sure!!
 glm::vec3 up(0, 1, 0);
+
+float horiontalAngle = 0;
+float verticalAngle = 0;
 
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
@@ -146,6 +150,18 @@ void updatecam() {
         eye = glm::vec3(plane.position.x + 2.5 * cos(plane.pitch * M_PI / 180), plane.position.y + 1, plane.position.z - 2.5 * sin(plane.pitch * M_PI / 180));
         target = glm::vec3(plane.position.x + 4 * cos(plane.pitch * M_PI / 180), plane.position.y , plane.position.z - 4 * sin(plane.pitch * M_PI / 180));
     }
+    else if (camera_view == 4) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+        double phi = 0.01 * (400 - xpos);
+        double theta = 0.01 * (400 - ypos);
+
+        eye = glm::vec3(plane.position.x + heli_rad * cos(theta) * sin(phi), plane.position.y + heli_rad * sin(theta), plane.position.z + heli_rad * cos(theta) * cos(phi));
+
+        //cout << xpos << '\t' << ypos << endl;
+        target = glm::vec3(plane.position.x, plane.position.y, plane.position.z);
+    }
 }
 
 void tick_input(GLFWwindow *window) {
@@ -179,6 +195,19 @@ void tick_input(GLFWwindow *window) {
         else if (camera_view == 3) {
             eye = glm::vec3(plane.position.x + 2 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z + 2 * sin(plane.pitch * M_PI / 180));
             target = glm::vec3(plane.position.x + 4 * cos(plane.pitch * M_PI / 180), plane.position.y, plane.position.z + 4 * sin(plane.pitch * M_PI / 180));
+            camera_view = 4;
+        }
+        else if (camera_view == 4) {
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+
+            double phi = 0.01 * (400 - xpos);
+            double theta = 0.01 * (400 - ypos);
+
+            eye = glm::vec3(plane.position.x + heli_rad * cos(theta) * sin(phi), heli_rad * sin(theta), heli_rad * cos(theta) * cos(phi));
+
+            //cout << xpos << '\t' << ypos << endl;
+            target = glm::vec3(plane.position.x, plane.position.y, plane.position.z);
             camera_view = 0;
         }
         CAMERA_CHANGE_VAR = 1;
