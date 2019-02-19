@@ -34,6 +34,7 @@ class Missile {
         float roll;
         float yaw;
         bool CanonCollision(Canon canon);
+        bool ParachuteCollision(Parachute parachute);
         glm::vec3 velocity;
         glm::vec3 acc;
     private:

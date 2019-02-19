@@ -348,6 +348,17 @@ void tick_elements() {
             }
         }
 
+        for (vector <Parachute>::iterator it = parachutes.begin(); it != parachutes.end(); it++) {
+            if (i->ParachuteCollision(*it)) {
+                cout << "Phod Diya" << endl;
+                parachutes.erase(it);
+                missiles.erase(i);
+                it--;
+                i--;
+                break;
+            }
+        }
+
     }
 
     for (vector <Parachute>::iterator it = parachutes.begin(); it != parachutes.end(); it++) {

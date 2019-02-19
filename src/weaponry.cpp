@@ -308,3 +308,57 @@ bool Missile::CanonCollision(Canon canon) {
         return false;
     }
 }
+
+bool Missile::ParachuteCollision(Parachute parachute) {
+    float left_x = this->left_position.x + 1.5 * cos(this->pitch * M_PI / 180) * cos(this->yaw * M_PI / 180);
+    float left_y = this->left_position.y - 0.25f * sin(this->yaw * M_PI / 180);
+    float left_z = this->left_position.z + 2.0f;
+
+    float right_x = this->right_position.x + 1.5 * cos(this->pitch * M_PI / 180) * cos(this->yaw * M_PI / 180);
+    float right_y = this->right_position.y - 0.25f * sin(this->yaw * M_PI / 180);
+    float right_z = this->right_position.z - 2.0f;
+
+    bool left_in;
+    bool right_in;
+
+    if ((left_x - (parachute.position.x + 2) * (left_x - (parachute.position.x - 2))) < 0) {
+        if ((left_y - (parachute.position.y + 2) * (left_y - (parachute.position.y - 2))) < 0) {
+            if ((left_z - (parachute.position.z + 2) * (left_z - (parachute.position.z - 2))) < 0) {
+                left_in = true;
+            }
+            else {
+                left_in = false;
+            }
+        }
+        else {
+            left_in = false;
+        }
+    }
+    else {
+        left_in = false;
+    }
+
+    if ((right_x - (parachute.position.x + 2) * (right_x - (parachute.position.x - 2))) < 0) {
+        if ((right_y - (parachute.position.y + 2) * (right_y - (parachute.position.y - 2))) < 0) {
+            if ((right_z - (parachute.position.z + 2) * (right_z - (parachute.position.z - 2))) < 0) {
+                right_in = true;
+            }
+            else {
+                right_in = false;
+            }
+        }
+        else {
+            right_in = false;
+        }
+    }
+    else {
+        right_in = false;
+    }
+
+    if (left_in || right_in) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
