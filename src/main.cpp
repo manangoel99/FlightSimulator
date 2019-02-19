@@ -322,6 +322,22 @@ void tick_elements() {
 
     for (vector <Missile>::iterator i = missiles.begin(); i != missiles.end(); i++) {
         i->tick();
+        if (i->left_position.y <= -4) {
+            missiles.erase(i);
+            i--;
+            break;
+        }
+
+        for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
+            if (i->CanonCollision(*it)) {
+                canons.erase(it);
+                missiles.erase(i);
+                it--;
+                i--;
+                break;
+            }
+        }
+
     }
 
     lifebar.CreateLifeObject(plane);

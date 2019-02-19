@@ -57,7 +57,7 @@ bool Bomb::detect_collision(Canon canon) {
 
     z = z - 9;
 
-    if (z <= 0 and this->position.y - 2 <= 0.1) {
+    if (z <= 0 and this->position.y - 2 <= -3.9) {
         return true;
     }
     else {
@@ -76,6 +76,7 @@ Missile::Missile(Plane plane) {
     this->velocity = glm::vec3(5 * (cos(plane.pitch * (M_PI / 180)) * cos(plane.yaw * (M_PI / 180))), 5 * sin(plane.yaw * (M_PI / 180)), -5 * sin(plane.pitch * M_PI / 180));
 
     GLfloat left_coord_missile[50000];
+    GLfloat right_coord_missile[50000];
 
     float theta = 0;
 
@@ -94,6 +95,16 @@ Missile::Missile(Plane plane) {
         left_coord_missile[i + 6] = 1;
         left_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
         left_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        right_coord_missile[i] = 1;
+        right_coord_missile[i + 1] = r * sin(theta);
+        right_coord_missile[i + 2] = r * cos(theta);
+        right_coord_missile[i + 3] = 1.5;
+        right_coord_missile[i + 4] = 0;
+        right_coord_missile[i + 5] = 0;
+        right_coord_missile[i + 6] = 1;
+        right_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        right_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
 
         theta += ((2 * M_PI) / n);
     }
@@ -126,72 +137,6 @@ Missile::Missile(Plane plane) {
         left_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
         left_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
 
-        theta += ((2 * M_PI) / n);
-    }
-
-    theta = 0;
-
-    for (ll i = 27 * n; i < 45 * n; i += 18)
-    {
-        left_coord_missile[i] = 0;
-        left_coord_missile[i + 1] = r * sin(theta);
-        left_coord_missile[i + 2] = r * cos(theta);
-
-        left_coord_missile[i + 3] = -1;
-        left_coord_missile[i + 4] = r * sin(theta);
-        left_coord_missile[i + 5] = r * cos(theta);
-
-        left_coord_missile[i + 6] = 0;
-        left_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
-        left_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
-
-        left_coord_missile[i + 9] = 0;
-        left_coord_missile[i + 10] = r * sin(theta + (2 * M_PI) / n);
-        left_coord_missile[i + 11] = r * cos(theta + (2 * M_PI) / n);
-
-        left_coord_missile[i + 12] = -1;
-        left_coord_missile[i + 13] = r * sin(theta);
-        left_coord_missile[i + 14] = r * cos(theta);
-
-        left_coord_missile[i + 15] = -1;
-        left_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
-        left_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
-
-        theta += ((2 * M_PI) / n);
-    }
-
-    for (ll i = 0; i < 45 * n; i++) {
-        if (i % 3 == 2) {
-            left_coord_missile[i] += 2.0f;
-        }
-        if (i % 3 == 1) {
-            left_coord_missile[i] -= 0.25f;
-        }
-    }
-
-    theta = 0;
-
-    GLfloat right_coord_missile[50000];
-
-    for (ll i = 0; i < 9 * n; i += 9)
-    {
-        right_coord_missile[i] = 1;
-        right_coord_missile[i + 1] = r * sin(theta);
-        right_coord_missile[i + 2] = r * cos(theta);
-        right_coord_missile[i + 3] = 1.5;
-        right_coord_missile[i + 4] = 0;
-        right_coord_missile[i + 5] = 0;
-        right_coord_missile[i + 6] = 1;
-        right_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
-        right_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
-
-        theta += ((2 * M_PI) / n);
-    }
-
-    theta = 0;
-
-    for(ll i = 9 * n; i < 27 * n; i += 18)
-    {
         right_coord_missile[i] = 0;
         right_coord_missile[i + 1] = r * sin(theta);
         right_coord_missile[i + 2] = r * cos(theta);
@@ -223,6 +168,30 @@ Missile::Missile(Plane plane) {
 
     for (ll i = 27 * n; i < 45 * n; i += 18)
     {
+        left_coord_missile[i] = 0;
+        left_coord_missile[i + 1] = r * sin(theta);
+        left_coord_missile[i + 2] = r * cos(theta);
+
+        left_coord_missile[i + 3] = -1;
+        left_coord_missile[i + 4] = r * sin(theta);
+        left_coord_missile[i + 5] = r * cos(theta);
+
+        left_coord_missile[i + 6] = 0;
+        left_coord_missile[i + 7] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 8] = r * cos(theta + (2 * M_PI) / n);
+
+        left_coord_missile[i + 9] = 0;
+        left_coord_missile[i + 10] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 11] = r * cos(theta + (2 * M_PI) / n);
+
+        left_coord_missile[i + 12] = -1;
+        left_coord_missile[i + 13] = r * sin(theta);
+        left_coord_missile[i + 14] = r * cos(theta);
+
+        left_coord_missile[i + 15] = -1;
+        left_coord_missile[i + 16] = r * sin(theta + (2 * M_PI) / n);
+        left_coord_missile[i + 17] = r * cos(theta + (2 * M_PI) / n);
+
         right_coord_missile[i] = 0;
         right_coord_missile[i + 1] = r * sin(theta);
         right_coord_missile[i + 2] = r * cos(theta);
@@ -249,17 +218,17 @@ Missile::Missile(Plane plane) {
 
         theta += ((2 * M_PI) / n);
     }
-    
+
     for (ll i = 0; i < 45 * n; i++) {
         if (i % 3 == 2) {
+            left_coord_missile[i] += 2.0f;
             right_coord_missile[i] -= 2.0f;
         }
         if (i % 3 == 1) {
+            left_coord_missile[i] -= 0.25f;
             right_coord_missile[i] -= 0.25f;
         }
     }
-
-
 
     this->left_object = create3DObject(GL_TRIANGLES, 15 * n + 3, left_coord_missile, COLOR_RED, GL_FILL);
     this->right_object = create3DObject(GL_TRIANGLES, 15 * n + 3, right_coord_missile, COLOR_RED, GL_FILL);
@@ -300,4 +269,42 @@ void Missile::tick() {
     this->left_position += this->velocity;
     this->right_position += this->velocity;
     this->velocity += this->acc;
+}
+
+bool Missile::CanonCollision(Canon canon) {
+    float left_x = this->left_position.x + 1.5 * cos(this->pitch * M_PI / 180) * cos(this->yaw * M_PI / 180);
+    float left_y = this->left_position.y - 0.25f * sin(this->yaw * M_PI / 180);
+    float left_z = this->left_position.z + 2.0f;
+
+    float right_x = this->right_position.x + 1.5 * cos(this->pitch * M_PI / 180) * cos(this->yaw * M_PI / 180);
+    float right_y = this->right_position.y - 0.25f * sin(this->yaw * M_PI / 180);
+    float right_z = this->right_position.z - 2.0f;
+
+    bool left_in;
+    bool right_in;
+
+    float Left = (left_x - canon.position.x) * (left_x - canon.position.x);
+    Left += (left_z - canon.position.z) * (left_z - canon.position.z);
+
+    Left -= 9;
+
+    if (Left < 0 and left_y <= -3.9) {
+        left_in = true;
+    }
+
+    float Right = (right_x - canon.position.x) * (right_x - canon.position.x);
+    Right += (right_z - canon.position.z) * (right_z - canon.position.z);
+
+    Right -= 9;
+
+    if (Right < 0 and right_y <= -3.9) {
+        right_in = true;
+    }
+
+    if (left_in or right_in) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }

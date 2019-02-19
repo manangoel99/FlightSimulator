@@ -33,6 +33,7 @@ class Missile {
         float pitch;
         float roll;
         float yaw;
+        bool CanonCollision(Canon canon);
         glm::vec3 velocity;
         glm::vec3 acc;
     private:
