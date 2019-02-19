@@ -4,6 +4,8 @@
 
 #define ll long long
 
+using namespace std;
+
 SmokeRing::SmokeRing(float x, float y, float z) {
     this->position = glm::vec3(x, y, z);
     GLfloat vertex_buffer_data[20000];
@@ -392,4 +394,132 @@ void CanonBall::tick() {
     this->position += this->velocity;
     this->velocity += this->acc;
     this->rotation += 1;
+}
+
+Parachute::Parachute (float x, float y, float z) {
+    this->position = glm::vec3(x, y, z);
+    this->rotation = 270;
+    this->velocity = glm::vec3(0, 0, 0);
+    this->acc = glm::vec3(0, -0.001, 0);
+
+    GLfloat vertex_buffer_data[] = {
+        -2.0f,-2.0f,-2.0f, // triangle 2 : begin
+        -2.0f,-2.0f, 2.0f,
+        -2.0f, 2.0f, 2.0f, // triangle 2 : end
+
+        2.0f, 2.0f,-2.0f, // triangle 2 : begin
+        -2.0f,-2.0f,-2.0f,
+        -2.0f, 2.0f,-2.0f, // triangle 2 : end
+
+        2.0f,-2.0f, 2.0f,
+        -2.0f,-2.0f,-2.0f,
+        2.0f,-2.0f,-2.0f,
+
+        2.0f, 2.0f,-2.0f,
+        2.0f,-2.0f,-2.0f,
+        -2.0f,-2.0f,-2.0f,
+
+        -2.0f,-2.0f,-2.0f,
+        -2.0f, 2.0f, 2.0f,
+        -2.0f, 2.0f,-2.0f,
+
+        2.0f,-2.0f, 2.0f,
+        -2.0f,-2.0f, 2.0f,
+        -2.0f,-2.0f,-2.0f,
+
+        -2.0f, 2.0f, 2.0f,
+        -2.0f,-2.0f, 2.0f,
+        2.0f,-2.0f, 2.0f,
+
+        2.0f, 2.0f, 2.0f,
+        2.0f,-2.0f,-2.0f,
+        2.0f, 2.0f,-2.0f,
+
+        2.0f,-2.0f,-2.0f,
+        2.0f, 2.0f, 2.0f,
+        2.0f,-2.0f, 2.0f,
+
+        2.0f, 2.0f, 2.0f,
+        2.0f, 2.0f,-2.0f,
+        -2.0f, 2.0f,-2.0f,
+
+        2.0f, 2.0f, 2.0f,
+        -2.0f, 2.0f,-2.0f,
+        -2.0f, 2.0f, 2.0f,
+
+        2.0f, 2.0f, 2.0f,
+        -2.0f, 2.0f, 2.0f,
+        2.0f,-2.0f, 2.0f
+    };
+
+    GLfloat parachute_arr[540000] = {-1};
+
+    color_t COLOR_JADEGREEN = {
+        0, 168, 107,
+    };
+
+    float radius = 4.0f;
+
+    int sides = 100;
+    float angle = (2 * M_PI) / float(sides);
+
+    for(ll i = 0; i < sides / 2; i++)
+        for(ll j = 0; j < sides; j++)
+        {
+            int k = sides * i + j;
+            parachute_arr[9 * k] = 0.0f;
+            parachute_arr[9 * k + 1] = 0.0f;  
+            parachute_arr[9 * k + 2] = 4 + radius * sin(i * angle);
+
+            parachute_arr[9 * k + 3] = radius * cos(j * angle) * cos(i * angle); 
+            parachute_arr[9 * k + 4] = radius * sin(j * angle) * cos(i * angle);
+            parachute_arr[9 * k + 5] = 4 + radius * sin(i * angle); 
+
+            parachute_arr[9 * k + 6] = radius * cos((j + 1) * angle) * cos(i * angle); 
+            parachute_arr[9 * k + 7] = radius * sin((j + 1) * angle) * cos(i * angle); 
+            parachute_arr[9 * k + 8] = 4 + radius * sin(i * angle); 
+        }
+    
+    this->ParachuteObject = create3DObject(GL_TRIANGLES, sides*sides*3, parachute_arr, COLOR_JADEGREEN, GL_FILL);
+
+    GLfloat vertex_buffer[] = {
+        2.0f, 2.0f, 2.0f,
+        radius * cos (M_PI / 4), radius * sin (M_PI / 4), 4.0f,
+        radius * cos((M_PI / 4) + angle), radius * sin((M_PI / 4) + angle), 4.0f,
+
+        -2.0f, 2.0f, 2.0f,
+        radius * cos (3 * M_PI / 4), radius * sin (3 * M_PI / 4), 4.0f,
+        radius * cos((3 * M_PI / 4) + angle), radius * sin((3 * M_PI / 4) + angle), 4.0f,
+
+        -2.0f, -2.0f, 2.0f,
+        radius * cos (5 * M_PI / 4), radius * sin (5 * M_PI / 4), 4.0f,
+        radius * cos((5 * M_PI / 4) + angle), radius * sin((5 * M_PI / 4) + angle), 4.0f,
+
+        2.0f, -2.0f, 2.0f,
+        radius * cos (7 * M_PI / 4), radius * sin (7 * M_PI / 4), 4.0f,
+        radius * cos((7 * M_PI / 4) + angle), radius * sin((7 * M_PI / 4) + angle), 4.0f,
+    };
+
+    this->RopeObject = create3DObject(GL_TRIANGLES, 12, vertex_buffer, COLOR_BLACK, GL_FILL);
+
+    this->MainObject = create3DObject(GL_TRIANGLES, 12 * 3, vertex_buffer_data, COLOR_JADEGREEN, GL_FILL);
+}
+
+void Parachute::draw(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate(this->position); // glTranslatef
+    glm::mat4 rotate = glm::rotate((float)(this->rotation * M_PI / 180.0f), glm::vec3(1, 0, 0));
+    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
+    // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
+    Matrices.model *= (translate * rotate);
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->MainObject);
+    draw3DObject(this->ParachuteObject);
+    draw3DObject(this->RopeObject);
+}
+
+void Parachute::tick() {
+    this->position += this->velocity;
+    this->velocity += this->acc;
 }

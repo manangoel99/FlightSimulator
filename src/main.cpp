@@ -30,6 +30,7 @@ vector <Canon> canons;
 vector <CanonBall> balls;
 vector <Bomb> bombs;
 vector <Missile> missiles;
+vector <Parachute> parachutes;
 
 ll num_ticks = 0;
 LifeBar lifebar;
@@ -114,6 +115,10 @@ void draw() {
         i->draw_right(VP);
     }
 
+    for (vector <Parachute>::iterator i = parachutes.begin(); i != parachutes.end(); i++) {
+        i->draw(VP);
+    }
+
     lifebar.draw(VP1);
     heightbar.draw(VP1);
     plane.draw(VP);
@@ -129,7 +134,7 @@ void updatecam() {
         target = plane.position;
     }
     else if (camera_view == 2) {
-        eye = glm::vec3(10, 10, 10);    //Tower
+        eye = glm::vec3(100, 100, 100);    //Tower
         target = plane.position;
     }
     else if (camera_view == 3) {
@@ -320,6 +325,11 @@ void tick_elements() {
         balls.push_back(c1);
     }
 
+    if (num_ticks % 247 == 0) {
+        Parachute p = Parachute(rand() % 300, 40, rand() % 300);
+        parachutes.push_back(p);
+    } 
+
     for (vector <Missile>::iterator i = missiles.begin(); i != missiles.end(); i++) {
         i->tick();
         if (i->left_position.y <= -4) {
@@ -338,6 +348,16 @@ void tick_elements() {
             }
         }
 
+    }
+
+    for (vector <Parachute>::iterator it = parachutes.begin(); it != parachutes.end(); it++) {
+
+        it->tick();
+        if (it->position.y <= -7) {
+            parachutes.erase(it);
+            it--;
+            break;
+        }
     }
 
     lifebar.CreateLifeObject(plane);

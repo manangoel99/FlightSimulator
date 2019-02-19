@@ -62,4 +62,20 @@ class CanonBall {
         VAO *object;
 };
 
+class Parachute {
+    public:
+        Parachute() {}
+        Parachute (float x, float y, float z);
+        glm::vec3 position;
+        float rotation;
+        void draw(glm::mat4 VP);
+        void tick();
+        glm::vec3 velocity;
+        glm::vec3 acc;
+    private:
+        VAO *MainObject;
+        VAO *ParachuteObject;
+        VAO *RopeObject;
+};
+
 #endif // !ENEMIES_H
