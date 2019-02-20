@@ -338,7 +338,7 @@ void tick_elements() {
 
     fuelgauge.set_fuel(plane);
 
-    if (plane.life <= 0 || plane.fuel <= 0) {
+    if (plane.life <= 0 || plane.fuel <= 0 || plane.position.y <= -4) {
         quit(window);
     }
 
