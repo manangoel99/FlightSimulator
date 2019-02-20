@@ -7,6 +7,7 @@
 #include "dashboard.h"
 #include "weaponry.h"
 #include "powerups.h"
+#include "scoreboard.h"
 
 #define ll long long
 
@@ -25,6 +26,10 @@ Ball ball1;
 Plane plane;
 Sea sea;
 
+Segments one;
+Segments ten;
+Segments hundred;
+
 vector <SmokeRing> rings;
 vector <Volcano> vols;
 vector <Canon> canons;
@@ -35,6 +40,8 @@ vector <Parachute> parachutes;
 vector <Bullet> bullets;
 vector <LifePowerUp> lifepowerups;
 vector <FuelPowerUp> fuelpowerups;
+
+int score = 0;
 
 ll num_ticks = 0;
 LifeBar lifebar;
@@ -89,6 +96,9 @@ void draw() {
     glm::mat4 VP = Matrices.projection * Matrices.view;
     glm::mat4 VP1 = Matrices.projection * Matrices1.view;
 
+    one.draw(VP1);
+    ten.draw(VP1);
+    hundred.draw(VP1);
     // Send our transformation to the currently bound shader, in the "MVP" uniform
     // For each model you render, since the MVP will be different (at least the M part)
     // Don't change unless you are sure!!
@@ -319,6 +329,21 @@ void tick_elements() {
 
     fuelgauge.set_fuel(plane);
 
+    if (plane.life <= 0 || plane.fuel <= 0) {
+        quit(window);
+    }
+
+    int ones = score % 10;
+
+    int tens = score / 10;
+    tens = tens % 10;
+
+    int hundereds = score / 100;
+
+    one.set_number(ones);
+    hundred.set_number(hundereds);
+    ten.set_number(tens);
+
     if (num_ticks % 653 == 0) {
         LifePowerUp l = LifePowerUp(rand() % 300, rand() % 30, rand() % 300);
         lifepowerups.push_back(l);
@@ -463,6 +488,7 @@ void tick_elements() {
                 missiles.erase(i);
                 it--;
                 i--;
+                score += 10;
                 break;
             }
         }
@@ -474,6 +500,7 @@ void tick_elements() {
                 missiles.erase(i);
                 it--;
                 i--;
+                score += 5;
                 break;
             }
         }
@@ -520,6 +547,10 @@ void initGL(GLFWwindow *window, int width, int height) {
     lifebar.CreateLifeObject(plane);
     compass     = Compass(10, 10, 0);
     fuelgauge   = FuelGauge(-12, 9, 0, plane);
+
+    one         = Segments(0.6, 10.5, 0);
+    ten         = Segments(-0.3, 10.5, 0);
+    hundred     = Segments(-1.0, 10.5, 0);
 
     for (ll i = 0; i < 50; i++) {
         SmokeRing r = SmokeRing(rand() % 300, rand() % 30, rand() % 300);
@@ -585,7 +616,7 @@ int main(int argc, char **argv) {
 
         if (t1.processTick()) {
             plane.fuel -= 1;
-
+            score += 1;
         }
 
         // Poll for Keyboard and mouse events

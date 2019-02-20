@@ -35,7 +35,13 @@ void LifeBar::CreateLifeObject(Plane plane) {
         2 * Life, 0.4f, 0.0f,
     };
 
-    this->LifeObject = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data, COLOR_GREEN, GL_FILL);
+    if (Life <= 0.2) {
+        this->LifeObject = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data, COLOR_RED, GL_FILL);
+    }
+    else {
+        this->LifeObject = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data, COLOR_GREEN, GL_FILL);
+    }
+
 }
 
 void LifeBar::draw(glm::mat4 VP) {
@@ -216,7 +222,7 @@ void FuelGauge::set_fuel(Plane plane) {
         2 * height, 0.4f, 0.0f,
     };
 
-    if (height <= -0.2) {
+    if (height <= 0.2) {
         this->FuelObject = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data, COLOR_RED, GL_FILL);
     }
     else {
