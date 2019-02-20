@@ -6,6 +6,7 @@
 #include "enemy.h"
 #include "dashboard.h"
 #include "weaponry.h"
+#include "powerups.h"
 
 #define ll long long
 
@@ -32,6 +33,8 @@ vector <Bomb> bombs;
 vector <Missile> missiles;
 vector <Parachute> parachutes;
 vector <Bullet> bullets;
+vector <LifePowerUp> lifepowerups;
+vector <FuelPowerUp> fuelpowerups;
 
 ll num_ticks = 0;
 LifeBar lifebar;
@@ -130,6 +133,14 @@ void draw() {
     }
 
     for (vector <Bullet>::iterator i = bullets.begin(); i != bullets.end(); i++) {
+        i->draw(VP);
+    }
+
+    for (vector <LifePowerUp>::iterator i = lifepowerups.begin(); i != lifepowerups.end(); i++) {
+        i->draw(VP);
+    }
+
+    for (vector <FuelPowerUp>::iterator i = fuelpowerups.begin(); i != fuelpowerups.end(); i++) {
         i->draw(VP);
     }
 
@@ -308,9 +319,49 @@ void tick_elements() {
 
     fuelgauge.set_fuel(plane);
 
+    if (num_ticks % 653 == 0) {
+        LifePowerUp l = LifePowerUp(rand() % 300, rand() % 30, rand() % 300);
+        lifepowerups.push_back(l);
+    }
+
+    if (num_ticks % 727 == 0) {
+        FuelPowerUp f = FuelPowerUp(rand() % 300, rand() % 30, rand() % 300);
+        fuelpowerups.push_back(f);
+    }
+
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         if(it->DetectPassing(plane) == true) {
             rings.erase(it);
+            it--;
+            break;
+        }
+    }
+
+    for (vector <LifePowerUp>::iterator it = lifepowerups.begin(); it != lifepowerups.end(); it++) {
+        if (it->CheckCollision(plane)) {
+            if (plane.life <= 35) {
+                plane.life += 5;
+            }
+            else {
+                plane.life = 40;
+            }
+
+            lifepowerups.erase(it);
+            it--;
+            break;
+        }
+    }
+
+    for (vector <FuelPowerUp>::iterator it = fuelpowerups.begin(); it != fuelpowerups.end(); it++) {
+        if (it->CheckCollision(plane)) {
+            if (plane.life <= 95) {
+                plane.fuel += 5;
+            }
+            else {
+                plane.life = 100;
+            }
+
+            fuelpowerups.erase(it);
             it--;
             break;
         }
@@ -533,7 +584,8 @@ int main(int argc, char **argv) {
         }
 
         if (t1.processTick()) {
-            plane.fuel -= 0.0001;
+            plane.fuel -= 1;
+
         }
 
         // Poll for Keyboard and mouse events
