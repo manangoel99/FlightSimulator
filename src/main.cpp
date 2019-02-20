@@ -366,6 +366,7 @@ void tick_elements() {
     for (vector <SmokeRing>::iterator it = rings.begin(); it != rings.end(); it++) {
         if(it->DetectPassing(plane) == true) {
             rings.erase(it);
+            score += 10;
             it--;
             break;
         }
