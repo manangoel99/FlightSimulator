@@ -51,6 +51,7 @@ LifeBar lifebar;
 HeightBar heightbar;
 Compass compass;
 FuelGauge fuelgauge;
+Arrow arrow;
 
 bool MousePress = false;
 int camera_view = 0;
@@ -157,6 +158,10 @@ void draw() {
     for (vector <CheckPoint>::iterator i = checkpoints.begin(); i != checkpoints.end(); i++) {
         i->draw(VP);
     }
+
+    vector <CheckPoint>::iterator i = checkpoints.begin();
+
+    arrow.draw(VP, plane, *i);
 
     lifebar.draw(VP1);
     heightbar.draw(VP1);
@@ -571,6 +576,10 @@ void tick_elements() {
         }
     }
 
+    arrow.position.x = plane.position.x + 2 * cos(plane.pitch * M_PI / 180);
+    arrow.position.z = plane.position.z - 2 * sin(plane.pitch * M_PI / 180);
+    arrow.position.y = plane.position.y + 2;
+
     lifebar.CreateLifeObject(plane);
     heightbar.UpdateBar(plane);
     //camera_rotation_angle += 1;
@@ -591,6 +600,7 @@ void initGL(GLFWwindow *window, int width, int height) {
     lifebar.CreateLifeObject(plane);
     compass     = Compass(10, 10, 0);
     fuelgauge   = FuelGauge(-12, 9, 0, plane);
+    arrow       = Arrow(0.0, 7, 0);
 
     one         = Segments(0.6, 10.5, 0);
     ten         = Segments(-0.3, 10.5, 0);
