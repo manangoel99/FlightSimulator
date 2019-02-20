@@ -8,6 +8,7 @@
 #include "weaponry.h"
 #include "powerups.h"
 #include "scoreboard.h"
+#include "checkpoints.h"
 
 #define ll long long
 
@@ -40,7 +41,9 @@ vector <Parachute> parachutes;
 vector <Bullet> bullets;
 vector <LifePowerUp> lifepowerups;
 vector <FuelPowerUp> fuelpowerups;
+vector <CheckPoint> checkpoints;
 
+vector <pair <bool, CheckPoint> > Memo;
 int score = 0;
 
 ll num_ticks = 0;
@@ -66,9 +69,6 @@ glm::vec3 eye(-1.5, 3, 0);
 glm::vec3 target(0, 0, 0);
 // Up - Up vector defines tilt of camera.  Don't change unless you are sure!!
 glm::vec3 up(0, 1, 0);
-
-float horiontalAngle = 0;
-float verticalAngle = 0;
 
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
@@ -151,6 +151,10 @@ void draw() {
     }
 
     for (vector <FuelPowerUp>::iterator i = fuelpowerups.begin(); i != fuelpowerups.end(); i++) {
+        i->draw(VP);
+    }
+
+    for (vector <CheckPoint>::iterator i = checkpoints.begin(); i != checkpoints.end(); i++) {
         i->draw(VP);
     }
 
@@ -418,8 +422,20 @@ void tick_elements() {
         }
         for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
             if(i->detect_collision(*it)) {
+
+                for (vector <pair <bool, CheckPoint> >::iterator ite = Memo.begin(); ite != Memo.end(); ite++) {
+                    if (ite->second.position.x >= it->position.x && ite->second.position.x <= it->position.x + 4) {
+                        if (ite->second.position.z >= it->position.z && ite->second.position.z <= it->position.z + 4) {
+                            ite->first = true;
+                            //cout << "HUHUAHUA" << endl;
+                        }
+                        
+                    }
+                }
+
                 canons.erase(it);
                 it--;
+                score += 10;
                 break;
             }
         }
@@ -484,6 +500,17 @@ void tick_elements() {
 
         for (vector <Canon>::iterator it = canons.begin(); it != canons.end(); it++) {
             if (i->CanonCollision(*it)) {
+
+                for (vector <pair <bool, CheckPoint> >::iterator ite = Memo.begin(); ite != Memo.end(); ite++) {
+                    if (ite->second.position.x >= it->position.x && ite->second.position.x <= it->position.x + 4) {
+                        if (ite->second.position.z >= it->position.z && ite->second.position.z <= it->position.z + 4) {
+                            ite->first = true;
+                            //cout << "HUHUAHUA" << endl;
+                        }
+                        
+                    }
+                }
+
                 canons.erase(it);
                 missiles.erase(i);
                 it--;
@@ -527,6 +554,23 @@ void tick_elements() {
         }
     }
 
+    for (vector <CheckPoint>::iterator it = checkpoints.begin(); it != checkpoints.end(); it++) {
+        if (it->DetectPassing(plane)) {
+            bool flag = false;
+            for (vector <pair <bool, CheckPoint> >::iterator ite = Memo.begin(); ite != Memo.end(); ite++) {
+                if (ite->second.position == it->position && ite->first == true) {
+                    checkpoints.erase(it);
+                    it--;
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag == true) {
+                break;
+            }
+        }
+    }
+
     lifebar.CreateLifeObject(plane);
     heightbar.UpdateBar(plane);
     //camera_rotation_angle += 1;
@@ -564,8 +608,12 @@ void initGL(GLFWwindow *window, int width, int height) {
 
     for (ll i = 0; i < 10; i++) {
         Canon c = Canon(rand() % 300, -4, rand() % 300);
-        cout << c.position.x << '\t' << c.position.y << '\t' << c.position.z << endl;
         canons.push_back(c);
+
+        CheckPoint c1 = CheckPoint(c.position.x + (rand() % 5), rand() % 30, c.position.z + (rand() % 5));
+        checkpoints.push_back(c1);
+
+        Memo.push_back(make_pair(false, c1));
     }
 
     // Create and compile our GLSL program from the shaders
