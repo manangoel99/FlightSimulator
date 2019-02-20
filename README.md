@@ -41,5 +41,7 @@ How To Play
     make
     ./graphics_assign2
 ```
-- **Happy Gaming**
+- **Happy Gaming*
+<br>
 Note -> For now the game only works on linux based platforms.
+{: .note}
