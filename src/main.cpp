@@ -411,7 +411,6 @@ void tick_elements() {
     for (vector <CanonBall>::iterator i = balls.begin(); i != balls.end(); i++) {
         i->tick();
         if (i->detect_collision(plane)) {
-            //cout << "TERI MAA CHUD GYI" << endl;
             plane.life -= 5;
             //cout << plane.life << endl;
             balls.erase(i);
